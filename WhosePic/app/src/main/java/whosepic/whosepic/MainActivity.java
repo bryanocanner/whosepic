@@ -12,21 +12,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.github.tamir7.contacts.Contact;
-import com.github.tamir7.contacts.Contacts;
-import com.github.tamir7.contacts.Query;
-import com.google.gson.GsonBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
 
-import bolts.Continuation;
-import bolts.Task;
+
 
 public class MainActivity extends AppCompatActivity {
     Context context;
-    ArrayList<ContactListItem> items;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         goList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context , ContactListActivity.class);
+                Intent intent = new Intent(context , AllContacts.class);
                 startActivity(intent);
             }
         });
