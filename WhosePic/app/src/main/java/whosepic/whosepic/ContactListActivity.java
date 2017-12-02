@@ -2,6 +2,6 @@ package whosepic.whosepic;
 
 
 
-public class ContactListActivity{
+public class ContactListActivity {
 }
 
