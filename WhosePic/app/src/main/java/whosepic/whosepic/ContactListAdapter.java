@@ -3,6 +3,7 @@ package whosepic.whosepic;
 /**
  * Created by emintosun on 2.12.2017.
  */
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.*;
