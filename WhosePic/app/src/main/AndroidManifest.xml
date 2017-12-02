@@ -16,6 +16,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ContactListActivity">
+        </activity>
+        <activity android:name=".AlbumsActivity">
+        </activity>
     </application>
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
 
 </manifest>

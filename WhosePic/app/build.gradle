@@ -26,5 +26,8 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.github.tamir7.contacts:contacts:1.1.7'
+    compile 'com.google.code.gson:gson:2.7'
+    compile 'com.parse.bolts:bolts-android:1.4.0'
     testCompile 'junit:junit:4.12'
 }
