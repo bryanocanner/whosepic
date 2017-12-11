@@ -1,21 +1,23 @@
 package whosepic.whosepic;
 
+import android.graphics.Bitmap;
 import android.media.Image;
+import android.net.Uri;
 
 /**
  * Created by emintosun on 2.12.2017.
  */
 public class ContactVO {
-    private String ContactImage;
+    private Bitmap ContactImage;
     private String ContactName;
     private String ContactNumber;
 
-    public String getContactImage() {
+    public Bitmap getContactImageBitmap() {
         return ContactImage;
     }
 
-    public void setContactImage(String contactImage) {
-        this.ContactImage = ContactImage;
+    public void setContactImageBitmap(Bitmap contactImage) {
+        this.ContactImage = contactImage;
     }
 
     public String getContactName() {

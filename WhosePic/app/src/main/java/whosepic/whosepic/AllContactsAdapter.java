@@ -5,6 +5,7 @@ package whosepic.whosepic;
  */
 
 import android.content.Context;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,10 @@ public class AllContactsAdapter extends RecyclerView.Adapter<AllContactsAdapter.
     @Override
     public void onBindViewHolder(ContactViewHolder holder, int position) {
         ContactVO contactVO = contactVOList.get(position);
+        if (contactVO.getContactImageBitmap() != null)
+            holder.ivContactImage.setImageBitmap(contactVO.getContactImageBitmap());
+        else
+            holder.ivContactImage.setImageResource(R.mipmap.ic_launcher);
         holder.tvContactName.setText(contactVO.getContactName());
         holder.tvPhoneNumber.setText(contactVO.getContactNumber());
     }

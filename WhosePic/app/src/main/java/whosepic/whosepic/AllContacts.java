@@ -6,17 +6,25 @@ package whosepic.whosepic;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,17 +48,30 @@ public class AllContacts extends AppCompatActivity {
         ContactVO contactVO;
 
         ContentResolver contentResolver = getContentResolver();
-        Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+        Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null,
+                null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
         if (cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
 
-                int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
+                int hasPhoneNumber = Integer.parseInt(cursor.getString(
+                        cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
                 if (hasPhoneNumber > 0) {
                     String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                     String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                    Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Integer.parseInt(id));
+                    Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
 
                     contactVO = new ContactVO();
                     contactVO.setContactName(name);
+                    InputStream inputStream = ContactsContract.Contacts.openContactPhotoInputStream(
+                            getContentResolver(), contactUri);
+
+                    if (inputStream != null) {
+                        Bitmap photo = BitmapFactory.decodeStream(inputStream);
+                        contactVO.setContactImageBitmap(photo);
+                    } else {
+                        contactVO.setContactImageBitmap(null);
+                    }
 
                     Cursor phoneCursor = contentResolver.query(
                             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -59,7 +80,8 @@ public class AllContacts extends AppCompatActivity {
                             new String[]{id},
                             null);
                     if (phoneCursor.moveToNext()) {
-                        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        String phoneNumber = phoneCursor.getString(
+                                phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                         contactVO.setContactNumber(phoneNumber);
                     }
 
