@@ -7,7 +7,7 @@ import android.net.Uri;
 /**
  * Created by emintosun on 2.12.2017.
  */
-public class ContactVO {
+public class Person {
     private Bitmap ContactImage;
     private String ContactName;
     private String ContactNumber;

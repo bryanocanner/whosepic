@@ -22,6 +22,8 @@
         </activity>
         <activity android:name=".AlbumsActivity">
         </activity>
+        <activity android:name=".GalleryViewActivity">
+        </activity>
     </application>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

@@ -5,7 +5,7 @@ package whosepic.whosepic;
  */
 
 import android.content.Context;
-import android.provider.MediaStore;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +17,10 @@ import java.util.List;
 
 public class AllContactsAdapter extends RecyclerView.Adapter<AllContactsAdapter.ContactViewHolder>{
 
-    private List<ContactVO> contactVOList;
+    private List<Person> personList;
     private Context mContext;
-    public AllContactsAdapter(List<ContactVO> contactVOList, Context mContext){
-        this.contactVOList = contactVOList;
+    public AllContactsAdapter(List<Person> personList, Context mContext){
+        this.personList = personList;
         this.mContext = mContext;
     }
 
@@ -33,18 +33,18 @@ public class AllContactsAdapter extends RecyclerView.Adapter<AllContactsAdapter.
 
     @Override
     public void onBindViewHolder(ContactViewHolder holder, int position) {
-        ContactVO contactVO = contactVOList.get(position);
-        if (contactVO.getContactImageBitmap() != null)
-            holder.ivContactImage.setImageBitmap(contactVO.getContactImageBitmap());
+        Person person = personList.get(position);
+        if (person.getContactImageBitmap() != null)
+            holder.ivContactImage.setImageBitmap(person.getContactImageBitmap());
         else
             holder.ivContactImage.setImageResource(R.mipmap.ic_launcher);
-        holder.tvContactName.setText(contactVO.getContactName());
-        holder.tvPhoneNumber.setText(contactVO.getContactNumber());
+        holder.tvContactName.setText(person.getContactName());
+        holder.tvPhoneNumber.setText(person.getContactNumber());
     }
 
     @Override
     public int getItemCount() {
-        return contactVOList.size();
+        return personList.size();
     }
 
     public static class ContactViewHolder extends RecyclerView.ViewHolder{
