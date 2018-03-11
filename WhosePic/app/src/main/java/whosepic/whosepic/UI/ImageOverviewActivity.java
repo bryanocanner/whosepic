@@ -1,29 +1,24 @@
-package whosepic.whosepic;
+package whosepic.whosepic.UI;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Random;
+
+import whosepic.whosepic.AppManagers.GalleryAdapter;
+import whosepic.whosepic.R;
 
 /**
  * Created by aligunes on 17/02/2018.
  */
 
-public class GalleryViewActivity extends AppCompatActivity {
+public class ImageOverviewActivity extends AppCompatActivity {
     private GridView gridView;
-    private GridViewAdapter gridAdapter;
+    private GalleryAdapter gridAdapter;
     private ArrayList<String> images;
 
     @Override
@@ -32,7 +27,7 @@ public class GalleryViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gallery);
 
         gridView = (GridView) findViewById(R.id.gridView);
-        gridAdapter = new GridViewAdapter(this,images,this);
+        gridAdapter = new GalleryAdapter(this,images,this);
         gridView.setAdapter(gridAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 

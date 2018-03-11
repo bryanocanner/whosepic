@@ -1,4 +1,4 @@
-package whosepic.whosepic;
+package whosepic.whosepic.UI;
 
 import android.support.v7.app.AppCompatActivity;
 

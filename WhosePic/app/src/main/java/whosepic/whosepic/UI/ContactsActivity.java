@@ -1,4 +1,4 @@
-package whosepic.whosepic;
+package whosepic.whosepic.UI;
 
 /**
  * Created by ASUS on 2.12.2017.
@@ -25,7 +25,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllContacts extends AppCompatActivity {
+import whosepic.whosepic.AppManagers.ContactsAdapter;
+import whosepic.whosepic.AppCode.ObjectModels.Person;
+import whosepic.whosepic.R;
+
+public class ContactsActivity extends AppCompatActivity {
 
     RecyclerView rvContacts;
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
@@ -41,7 +45,7 @@ public class AllContacts extends AppCompatActivity {
         rvContacts.addOnItemTouchListener(new RecyclerItemClickListener(getApplicationContext(),rvContacts, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(getApplicationContext(), GalleryViewActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ImageOverviewActivity.class);
                 //intent.putExtra("", (RecyclerView)v);
                 startActivity(intent);
             }
@@ -108,7 +112,7 @@ public class AllContacts extends AppCompatActivity {
                 }
             }
 
-            AllContactsAdapter contactAdapter = new AllContactsAdapter(personList, getApplicationContext());
+            ContactsAdapter contactAdapter = new ContactsAdapter(personList, getApplicationContext());
             rvContacts.setLayoutManager(new LinearLayoutManager(this));
             rvContacts.setAdapter(contactAdapter);
         }

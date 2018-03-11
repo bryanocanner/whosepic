@@ -1,4 +1,4 @@
-package whosepic.whosepic;
+package whosepic.whosepic.AppCode.ObjectModels;
 
 import android.graphics.Bitmap;
 import android.media.Image;

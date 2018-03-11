@@ -1,4 +1,4 @@
-package whosepic.whosepic;
+package whosepic.whosepic.AppManagers;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,13 +22,13 @@ import com.bumptech.glide.*;
  * Created by aligunes on 18/02/2018.
  */
 
-public class GridViewAdapter extends BaseAdapter {
+public class GalleryAdapter extends BaseAdapter {
     private Context context;
     private int layoutResourceId;
     private ArrayList<Bitmap> data = new ArrayList<Bitmap>();
     private ArrayList<String> images;
 
-    public GridViewAdapter(Context context, ArrayList<String> images,Activity activity) {
+    public GalleryAdapter(Context context, ArrayList<String> images, Activity activity) {
         this.context = context;
         this.images = images;
         this.images = getAllShownImagesPath(activity);
@@ -58,9 +58,7 @@ public class GridViewAdapter extends BaseAdapter {
         if (convertView == null) {
             picturesView = new ImageView(context);
             picturesView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            picturesView
-                    .setLayoutParams(new GridView.LayoutParams(270, 270));
-
+            picturesView.setLayoutParams(new GridView.LayoutParams(270, 270));
         } else {
             picturesView = (ImageView) convertView;
         }

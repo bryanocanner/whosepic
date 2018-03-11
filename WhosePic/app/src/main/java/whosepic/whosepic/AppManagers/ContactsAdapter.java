@@ -1,11 +1,10 @@
-package whosepic.whosepic;
+package whosepic.whosepic.AppManagers;
 
 /**
  * Created by ASUS on 2.12.2017.
  */
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +14,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class AllContactsAdapter extends RecyclerView.Adapter<AllContactsAdapter.ContactViewHolder>{
+import whosepic.whosepic.AppCode.ObjectModels.Person;
+import whosepic.whosepic.R;
+
+public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactViewHolder>{
 
     private List<Person> personList;
     private Context mContext;
-    public AllContactsAdapter(List<Person> personList, Context mContext){
+    public ContactsAdapter(List<Person> personList, Context mContext){
         this.personList = personList;
         this.mContext = mContext;
     }
