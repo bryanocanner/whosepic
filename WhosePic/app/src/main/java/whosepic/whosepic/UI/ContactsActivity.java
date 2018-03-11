@@ -21,8 +21,13 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.github.tamir7.contacts.Contact;
+import com.github.tamir7.contacts.Contacts;
+import com.github.tamir7.contacts.Query;
+
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import whosepic.whosepic.AppManagers.ContactsAdapter;
@@ -36,13 +41,16 @@ public class ContactsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Contacts.initialize(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_contacts);
 
         rvContacts = (RecyclerView) findViewById(R.id.rvContacts);
+        // Todo: read contact permission will be asked.
         //getPermissionToReadUserContacts();
         getAllContacts();
-        rvContacts.addOnItemTouchListener(new RecyclerItemClickListener(getApplicationContext(),rvContacts, new RecyclerItemClickListener.OnItemClickListener() {
+        rvContacts.addOnItemTouchListener(new RecyclerItemClickListener(getApplicationContext(),rvContacts,
+                                        new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getApplicationContext(), ImageOverviewActivity.class);
@@ -58,64 +66,23 @@ public class ContactsActivity extends AppCompatActivity {
 
     private void getAllContacts() {
         List<Person> personList = new ArrayList();
-        Person person;
-
-        ContentResolver contentResolver = getContentResolver();
-        Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null,
-                null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
-        if (cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-
-                int hasPhoneNumber = Integer.parseInt(cursor.getString(
-                        cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)));
-                if (hasPhoneNumber > 0) {
-                    String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-                    String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                    Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Integer.parseInt(id));
-                    Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
-
-                    person = new Person();
-                    person.setContactName(name);
-                    InputStream inputStream = ContactsContract.Contacts.openContactPhotoInputStream(
-                            getContentResolver(), contactUri);
-
-                    if (inputStream != null) {
-                        Bitmap photo = BitmapFactory.decodeStream(inputStream);
-                        person.setContactImageBitmap(photo);
-                    } else {
-                        person.setContactImageBitmap(null);
-                    }
-
-                    Cursor phoneCursor = contentResolver.query(
-                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                            null,
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-                            new String[]{id},
-                            null);
-                    if (phoneCursor.moveToNext()) {
-                        String phoneNumber = phoneCursor.getString(
-                                phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        person.setContactNumber(phoneNumber);
-                    }
-
-                    phoneCursor.close();
-
-                    Cursor emailCursor = contentResolver.query(
-                            ContactsContract.CommonDataKinds.Email.CONTENT_URI,
-                            null,
-                            ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
-                            new String[]{id}, null);
-                    while (emailCursor.moveToNext()) {
-                        String emailId = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-                    }
-                    personList.add(person);
-                }
-            }
-
-            ContactsAdapter contactAdapter = new ContactsAdapter(personList, getApplicationContext());
-            rvContacts.setLayoutManager(new LinearLayoutManager(this));
-            rvContacts.setAdapter(contactAdapter);
+        Query q = Contacts.getQuery();
+        q.hasPhoneNumber();
+        List<Contact> contacts = q.find();
+        for (Contact c : contacts) {
+            personList.add(new Person(c.getDisplayName(), c.getPhoneNumbers().get(0).getNumber(),
+                                    c.getPhotoUri() != null ? Uri.parse(c.getPhotoUri()) : null));
         }
+        // Todo: sort personlist api 24 required.
+        /*personList.sort(new Comparator<Person>() {
+            @Override
+            public int compare(Person p1, Person p2) {
+                return p1.getContactName().compareToIgnoreCase(p2.getContactName());
+            }
+        });*/
+        ContactsAdapter contactAdapter = new ContactsAdapter(personList, getApplicationContext());
+        rvContacts.setLayoutManager(new LinearLayoutManager(this));
+        rvContacts.setAdapter(contactAdapter);
     }
 
     static class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener

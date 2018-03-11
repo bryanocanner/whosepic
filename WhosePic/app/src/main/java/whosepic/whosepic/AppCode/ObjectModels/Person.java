@@ -8,16 +8,22 @@ import android.net.Uri;
  * Created by emintosun on 2.12.2017.
  */
 public class Person {
-    private Bitmap ContactImage;
+    private Uri ContactImageUri;
     private String ContactName;
     private String ContactNumber;
 
-    public Bitmap getContactImageBitmap() {
-        return ContactImage;
+    public Person (String name, String number, Uri uri) {
+        ContactImageUri = uri;
+        ContactName = name;
+        ContactNumber = number;
     }
 
-    public void setContactImageBitmap(Bitmap contactImage) {
-        this.ContactImage = contactImage;
+    public Uri getContactImageUri() {
+        return ContactImageUri;
+    }
+
+    public void setContactImageUri(Uri contactImageUri) {
+        this.ContactImageUri = contactImageUri;
     }
 
     public String getContactName() {
