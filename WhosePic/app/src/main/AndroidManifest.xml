@@ -24,6 +24,9 @@
         </activity>
         <activity android:name=".UI.ImageOverviewActivity">
         </activity>
+        <activity android:name="whosepic.whosepic.UI.InfoView"
+            android:theme="@style/AppTheme.CustomTheme"
+        ></activity>
     </application>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
