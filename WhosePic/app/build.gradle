@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "whosepic.whosepic"
         minSdkVersion 21
-        targetSdkVersion 24
+        targetSdkVersion 26
         versionCode 1
         multiDexEnabled true
         versionName "1.0"
@@ -38,4 +38,5 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
 
     testCompile 'junit:junit:4.12'
+    implementation 'com.google.android.gms:play-services-maps:11.8.0'
 }

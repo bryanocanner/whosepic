@@ -2,6 +2,7 @@ package whosepic.whosepic.UI;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -22,7 +23,13 @@ public class MainActivity extends AppCompatActivity {
         Button goList = (Button) findViewById(R.id.goListButton);
         Button goAlbums = (Button) findViewById(R.id.goAlbumsButton);
         goList.setText("ContactList");
+        goList.setTextSize(22);
+        goList.setBackgroundColor(Color.parseColor("#ffffff"));
+        goList.setTextColor(Color.parseColor("#3B3264"));
         goAlbums.setText("Albums");
+        goAlbums.setTextSize(22);
+        goAlbums.setBackgroundColor(Color.parseColor("#ffffff"));
+        goList.setTextColor(Color.parseColor("#3B3264"));
         goList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -37,5 +44,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        startActivity(new Intent(MainActivity.this,InfoView.class));
+
     }
 }
