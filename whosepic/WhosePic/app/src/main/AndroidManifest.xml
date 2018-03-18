@@ -24,7 +24,9 @@
         </activity>
         <activity android:name=".UI.ImageOverviewActivity">
         </activity>
-        <activity android:name="whosepic.whosepic.UI.InfoView"
+        <activity android:name=".UI.ImagePreviewActivity">
+        </activity>
+        <activity android:name="whosepic.whosepic.UI.InfoActivity"
             android:theme="@style/AppTheme.CustomTheme"
         ></activity>
     </application>

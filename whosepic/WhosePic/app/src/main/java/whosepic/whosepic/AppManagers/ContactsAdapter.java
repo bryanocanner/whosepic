@@ -37,11 +37,12 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     @Override
     public void onBindViewHolder(ContactViewHolder holder, int position) {
         Person person = personList.get(position);
-        Uri uri = person.getContactImageUri();
-        if (uri != null)
+        if (person.getContactImagePath() != null) {
+            Uri uri = Uri.parse(person.getContactImagePath());
             holder.ivContactImage.setImageURI(uri);
-        else
+        } else {
             holder.ivContactImage.setImageResource(R.mipmap.ic_launcher);
+        }
         holder.tvContactName.setText(person.getContactName());
         holder.tvPhoneNumber.setText(person.getContactNumber());
     }

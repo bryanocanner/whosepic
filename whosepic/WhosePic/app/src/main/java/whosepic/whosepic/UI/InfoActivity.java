@@ -10,7 +10,7 @@ import whosepic.whosepic.R;
  * Created by ecemafacan on 18.03.2018.
  */
 
-public class InfoView extends Activity{
+public class InfoActivity extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);

@@ -1,5 +1,6 @@
 package whosepic.whosepic.UI;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import whosepic.whosepic.AppCode.ObjectModels.Image;
+import whosepic.whosepic.AppCode.ObjectModels.Person;
 import whosepic.whosepic.AppManagers.GalleryAdapter;
 import whosepic.whosepic.R;
 
@@ -18,73 +21,30 @@ import whosepic.whosepic.R;
 
 public class ImageOverviewActivity extends AppCompatActivity {
     private GridView gridView;
-    private GalleryAdapter gridAdapter;
-    private ArrayList<String> images;
+    private GalleryAdapter galleryAdapter;
+    private Person person;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
 
+        person = (Person) (getIntent().getExtras().getSerializable("Person"));
         gridView = (GridView) findViewById(R.id.gridViewGallery);
-        gridAdapter = new GalleryAdapter(this,images,this);
-        gridView.setAdapter(gridAdapter);
+        galleryAdapter = new GalleryAdapter(this.getApplicationContext());
+        gridView.setAdapter(galleryAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                                     int position, long arg3) {
-                if (null != images && !images.isEmpty())
-                    Toast.makeText(
-                            getApplicationContext(),
-                            "position " + position + " " + images.get(position),
-                            Toast.LENGTH_LONG).show();
-                ;
-
+                if (galleryAdapter.getImages() != null && !galleryAdapter.getImages().isEmpty()) {
+                    Intent intent = new Intent(getApplicationContext(), ImagePreviewActivity.class);
+                    intent.putExtra("Image", (Image) galleryAdapter.getImages().get(position));
+                    startActivity(intent);
+                }
             }
         });
 
     }
-
-    // Prepare some dummy data for gridview
-//    private ArrayList<Bitmap> getData() {
-//        final ArrayList<Bitmap> imageItems = new ArrayList<>();
-//        //TypedArray imgs = getResources().obtainTypedArray(R.mipmap.ic_launcher);
-//        int a = (int)(Math.random() * 15);
-//        for (int i = 0; i < a; i++) {//imgs.length(); i++) {
-//            //Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imgs.getResourceId(i, -1));
-//            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);;
-//            imageItems.add(bitmap);
-//        }
-//        return imageItems;
-//    }
 }
-//public class GallarySample extends Activity {
-//
-//    /** The images. */
-//    private ArrayList<String> images;
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.gallery_activity);
-//
-//        GridView gallery = (GridView) findViewById(R.id.galleryGridView);
-//
-//        gallery.setAdapter(new ImageAdapter(this));
-//
-//        gallery.setOnItemClickListener(new OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> arg0, View arg1,
-//                                    int position, long arg3) {
-//                if (null != images && !images.isEmpty())
-//                    Toast.makeText(
-//                            getApplicationContext(),
-//                            "position " + position + " " + images.get(position),
-//                            300).show();
-//                ;
-//
-//            }
-//        });
-//
-//    }

@@ -1,24 +1,19 @@
 package whosepic.whosepic.UI;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import whosepic.whosepic.R;
-import whosepic.whosepic.UI.AlbumsActivity;
-import whosepic.whosepic.UI.ContactsActivity;
+
 import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
@@ -57,9 +52,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        if(!checkPermission())
+        if(!checkPermission()) {
             requestPermission();
-
+        } else {
+            startActivity(new Intent(MainActivity.this,InfoActivity.class));
+        }
     }
 
     private void requestPermission() {
@@ -85,17 +82,13 @@ public class MainActivity extends AppCompatActivity {
 
                     if (StoragePermission && ReadContactsPermission) {
                         ok = true;
-
-                    }
-                    else {
-                        ok = false;
                     }
                 }
 
                 break;
         }
         if(ok)
-            startActivity(new Intent(MainActivity.this,InfoView.class));
+            startActivity(new Intent(MainActivity.this,InfoActivity.class));
         else {
             Toast.makeText(MainActivity.this,"You need to give all permissions",Toast.LENGTH_LONG).show();
             android.os.Process.killProcess(android.os.Process.myPid());

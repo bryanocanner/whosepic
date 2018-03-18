@@ -1,29 +1,27 @@
 package whosepic.whosepic.AppCode.ObjectModels;
 
-import android.graphics.Bitmap;
-import android.media.Image;
-import android.net.Uri;
+import java.io.Serializable;
 
 /**
  * Created by emintosun on 2.12.2017.
  */
-public class Person {
-    private Uri ContactImageUri;
+public class Person implements Serializable {
+    private String ContactImagePath;
     private String ContactName;
     private String ContactNumber;
 
-    public Person (String name, String number, Uri uri) {
-        ContactImageUri = uri;
+    public Person (String name, String number, String path) {
+        ContactImagePath = path;
         ContactName = name;
         ContactNumber = number;
     }
 
-    public Uri getContactImageUri() {
-        return ContactImageUri;
+    public String getContactImagePath() {
+        return ContactImagePath;
     }
 
-    public void setContactImageUri(Uri contactImageUri) {
-        this.ContactImageUri = contactImageUri;
+    public void setContactImagePath(String contactImagePath) {
+        this.ContactImagePath = contactImagePath;
     }
 
     public String getContactName() {
@@ -41,4 +39,5 @@ public class Person {
     public void setContactNumber(String contactNumber) {
         ContactNumber = contactNumber;
     }
+
 }
