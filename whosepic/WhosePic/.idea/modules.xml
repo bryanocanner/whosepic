@@ -3,11 +3,13 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/WhosePic.iml" filepath="$PROJECT_DIR$/WhosePic.iml" />
+      <module fileurl="file://C:\Users\ASUS\Desktop\bitirme\whosepic\whosepic\WhosePic\WhosePic.iml" filepath="C:\Users\ASUS\Desktop\bitirme\whosepic\whosepic\WhosePic\WhosePic.iml" />
       <module fileurl="file://C:\Users\ASUS\Desktop\whosepic\WhosePic\WhosePic.iml" filepath="C:\Users\ASUS\Desktop\whosepic\WhosePic\WhosePic.iml" />
       <module fileurl="file://C:\Users\Sebahattin\Desktop\Dersler\senior\WhosePic\whosepic\WhosePic\WhosePic.iml" filepath="C:\Users\Sebahattin\Desktop\Dersler\senior\WhosePic\whosepic\WhosePic\WhosePic.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://C:\Users\Sebahattin\Desktop\Dersler\senior\WhosePic\whosepic\WhosePic\app\app.iml" filepath="C:\Users\Sebahattin\Desktop\Dersler\senior\WhosePic\whosepic\WhosePic\app\app.iml" />
       <module fileurl="file://C:\Users\ASUS\Desktop\whosepic\WhosePic\app\app.iml" filepath="C:\Users\ASUS\Desktop\whosepic\WhosePic\app\app.iml" />
+      <module fileurl="file://C:\Users\ASUS\Desktop\bitirme\whosepic\whosepic\WhosePic\app\app.iml" filepath="C:\Users\ASUS\Desktop\bitirme\whosepic\whosepic\WhosePic\app\app.iml" />
     </modules>
   </component>
 </project>

@@ -33,6 +33,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:27.0.2'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.github.tamir7.contacts:contacts:1.1.7'
+    compile 'com.nightonke:boommenu:2.1.1'
 
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'

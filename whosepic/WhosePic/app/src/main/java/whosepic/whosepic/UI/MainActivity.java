@@ -12,6 +12,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
+import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
+import com.nightonke.boommenu.BoomButtons.SimpleCircleButton;
+import com.nightonke.boommenu.BoomButtons.TextInsideCircleButton;
+import com.nightonke.boommenu.BoomMenuButton;
+import com.nightonke.boommenu.ButtonEnum;
+import com.nightonke.boommenu.Piece.PiecePlaceEnum;
+
 import whosepic.whosepic.R;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -57,6 +65,47 @@ public class MainActivity extends AppCompatActivity {
         } else {
             startActivity(new Intent(MainActivity.this,InfoActivity.class));
         }
+
+        BoomMenuButton bmb = (BoomMenuButton) findViewById(R.id.bmb);
+        bmb.setButtonEnum(ButtonEnum.TextInsideCircle);
+        bmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_3_1);
+        bmb.setButtonPlaceEnum(ButtonPlaceEnum.SC_3_3);
+
+        TextInsideCircleButton.Builder contactBuilder = new TextInsideCircleButton.Builder()
+                .listener(new OnBMClickListener() {
+                    @Override
+                    public void onBoomButtonClick(int index) {
+                        Intent intent = new Intent(context , ContactsActivity.class);
+                        startActivity(intent);
+                    }
+                });
+        contactBuilder.normalImageRes(R.drawable.contacts);
+        bmb.addBuilder(contactBuilder);
+
+        TextInsideCircleButton.Builder albumsBuilder = new TextInsideCircleButton.Builder()
+                .listener(new OnBMClickListener() {
+                    @Override
+                    public void onBoomButtonClick(int index) {
+                        Intent intent = new Intent(context, AlbumsActivity.class);
+                        startActivity(intent);
+                    }
+                });
+        albumsBuilder.normalImageRes(R.drawable.photogallery);
+        bmb.addBuilder(albumsBuilder);
+
+        TextInsideCircleButton.Builder infoBuilder = new TextInsideCircleButton.Builder()
+                .listener(new OnBMClickListener() {
+                    @Override
+                    public void onBoomButtonClick(int index) {
+                        startActivity(new Intent(MainActivity.this,InfoActivity.class));
+
+                    }
+                });
+        infoBuilder.normalImageRes(R.drawable.about);
+        bmb.addBuilder(infoBuilder);
+
+        goAlbums.setVisibility(View.INVISIBLE);
+        goList.setVisibility(View.INVISIBLE);
     }
 
     private void requestPermission() {

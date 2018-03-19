@@ -15,7 +15,7 @@ public class InfoActivity extends Activity{
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.infowindow);
+        setContentView(R.layout.activity_info);
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
