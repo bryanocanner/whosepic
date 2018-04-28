@@ -23,33 +23,6 @@
         android:text="Contact Name"
         android:layout_toRightOf="@+id/contactImage" />
 
-    <CheckBox
-        android:id="@+id/beardCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:text="Beard"
-        android:layout_below="@+id/contactImage" />
-
-    <CheckBox
-        android:id="@+id/glassCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="17dp"
-        android:text="Glass"
-        android:layout_below="@+id/beardCheckBox"/>
-
-    <Spinner
-        android:id="@+id/locationChecker"
-        android:layout_width="82dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="60dp"
-        android:layout_toRightOf="@+id/editText3"
-        android:layout_below="@+id/phoneNumberView" />
-
     <TextView
         android:id="@+id/phoneNumberView"
         android:layout_width="207dp"
@@ -59,28 +32,6 @@
         android:text="Phone Number"
         android:layout_toRightOf="@id/contactImage"
         android:layout_below="@id/contactName"/>
-
-    <ImageButton
-        android:id="@+id/imageButton2"
-        android:layout_width="45dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="60dp"
-        android:layout_toRightOf="@+id/locationChecker"
-        android:layout_below="@+id/phoneNumberView"
-        android:src="@android:drawable/ic_menu_search" />
-
-    <EditText
-        android:id="@+id/editText3"
-        android:layout_width="102dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginTop="44dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Location"
-        android:layout_toRightOf="@+id/beardCheckBox"
-        android:layout_below="@+id/contactImage"/>
 
     <GridView
         android:id="@+id/gridViewGallery"
@@ -95,5 +46,5 @@
         android:stretchMode="spacingWidthUniform"
         android:verticalSpacing="5dp"
         android:paddingBottom="10dp"
-        android:layout_below="@id/glassCheckBox"/>
+        android:layout_below="@id/contactImage"/>
 </RelativeLayout>
