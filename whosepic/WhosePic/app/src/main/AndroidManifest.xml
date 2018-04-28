@@ -22,7 +22,8 @@
         </activity>
         <activity android:name=".UI.AlbumsActivity">
         </activity>
-        <activity android:name=".UI.ImageOverviewActivity">
+        <activity android:name=".UI.ImageOverviewActivity"
+                  android:windowSoftInputMode="stateHidden|adjustResize">
         </activity>
         <activity android:name=".UI.ImagePreviewActivity">
         </activity>

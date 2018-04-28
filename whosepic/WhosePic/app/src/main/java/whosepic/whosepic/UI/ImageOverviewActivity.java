@@ -2,6 +2,7 @@ package whosepic.whosepic.UI;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,14 +27,17 @@ public class ImageOverviewActivity extends AppCompatActivity {
     private TextView numberView;
     private GalleryAdapter galleryAdapter;
     private Person person;
+    ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
-
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
         person = (Person) (getIntent().getExtras().getSerializable("Person"));
-        nameView = (TextView) findViewById(R.id.contactNameView);
+        nameView = (TextView) findViewById(R.id.contactName);
         numberView = (TextView) findViewById(R.id.phoneNumberView);
         nameView.setText(person.getContactName());
         numberView.setText(person.getContactNumber());
@@ -41,6 +45,7 @@ public class ImageOverviewActivity extends AppCompatActivity {
         gridView = (GridView) findViewById(R.id.gridViewGallery);
         galleryAdapter = new GalleryAdapter(this.getApplicationContext());
         gridView.setAdapter(galleryAdapter);
+        gridView.setNumColumns(3);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -49,10 +54,17 @@ public class ImageOverviewActivity extends AppCompatActivity {
                 if (galleryAdapter.getImages() != null && !galleryAdapter.getImages().isEmpty()) {
                     Intent intent = new Intent(getApplicationContext(), ImagePreviewActivity.class);
                     intent.putExtra("Image", (Image) galleryAdapter.getImages().get(position));
+                    intent.putExtra("person",person);
                     startActivity(intent);
                 }
             }
         });
 
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

@@ -7,6 +7,7 @@ package whosepic.whosepic.UI;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,14 +28,15 @@ public class ContactsActivity extends AppCompatActivity {
 
     RecyclerView rvContacts;
     List<Person> personList;
-    private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
-
+    ActionBar actionBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Contacts.initialize(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_contacts);
-
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
         rvContacts = (RecyclerView) findViewById(R.id.rvContacts);
         personList = new ArrayList<Person>();
         // Todo: read contact permission will be asked.
@@ -131,5 +133,11 @@ public class ContactsActivity extends AppCompatActivity {
         public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

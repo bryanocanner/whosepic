@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import whosepic.whosepic.AppCode.ObjectModels.Image;
 import whosepic.whosepic.R;
+import whosepic.whosepic.UI.Views.SquareImageView;
 
 /**
  * Created by ASUS on 18.03.2018.
@@ -52,13 +53,14 @@ public class ImageAdapter extends BaseAdapter {
 
     public View getView(final int position, View convertView,
                         ViewGroup parent) {
-        ImageView picturesView;
+        SquareImageView picturesView;
         if (convertView == null) {
-            picturesView = new ImageView(context);
+            picturesView = new SquareImageView(context);
             picturesView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             picturesView.setLayoutParams(new GridView.LayoutParams(270, 270));
+            notifyDataSetChanged();
         } else {
-            picturesView = (ImageView) convertView;
+            picturesView = (SquareImageView) convertView;
         }
 
         Glide.with(context).load(image.getPath())

@@ -1,76 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <GridView
-        android:id="@+id/gridViewGallery"
-        android:layout_width="fill_parent"
-        android:layout_height="261dp"
-        android:layout_marginTop="13dp"
-        android:clickable="true"
-        android:columnWidth="100dp"
-        android:drawSelectorOnTop="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:numColumns="auto_fit"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="5dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkBox2" />
-
     <QuickContactBadge
-        android:id="@+id/quickContactBadge"
+        android:id="@+id/contactImage"
         android:layout_width="100dp"
         android:layout_height="102dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="@mipmap/aa_round"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/aa" />
 
     <TextView
-        android:id="@+id/contactNameView"
+        android:id="@+id/contactName"
         android:layout_width="209dp"
         android:layout_height="43dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
         android:text="Contact Name"
-        app:layout_constraintStart_toEndOf="@+id/quickContactBadge"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_toRightOf="@+id/contactImage" />
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/beardCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
-        android:text="Bread"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/quickContactBadge" />
+        android:text="Beard"
+        android:layout_below="@+id/contactImage" />
 
     <CheckBox
-        android:id="@+id/checkBox2"
+        android:id="@+id/glassCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="17dp"
         android:text="Glass"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkBox" />
+        android:layout_below="@+id/beardCheckBox"/>
 
     <Spinner
-        android:id="@+id/spinner3"
+        android:id="@+id/locationChecker"
         android:layout_width="82dp"
         android:layout_height="42dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="60dp"
-        app:layout_constraintStart_toEndOf="@+id/editText3"
-        app:layout_constraintTop_toBottomOf="@+id/phoneNumberView" />
+        android:layout_toRightOf="@+id/editText3"
+        android:layout_below="@+id/phoneNumberView" />
 
     <TextView
         android:id="@+id/phoneNumberView"
@@ -79,8 +57,8 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="11dp"
         android:text="Phone Number"
-        app:layout_constraintStart_toEndOf="@+id/quickContactBadge"
-        app:layout_constraintTop_toBottomOf="@+id/contactNameView" />
+        android:layout_toRightOf="@id/contactImage"
+        android:layout_below="@id/contactName"/>
 
     <ImageButton
         android:id="@+id/imageButton2"
@@ -88,9 +66,9 @@
         android:layout_height="43dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="60dp"
-        app:layout_constraintStart_toEndOf="@+id/spinner3"
-        app:layout_constraintTop_toBottomOf="@+id/phoneNumberView"
-        app:srcCompat="@android:drawable/ic_menu_search" />
+        android:layout_toRightOf="@+id/locationChecker"
+        android:layout_below="@+id/phoneNumberView"
+        android:src="@android:drawable/ic_menu_search" />
 
     <EditText
         android:id="@+id/editText3"
@@ -101,7 +79,21 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Location"
-        app:layout_constraintStart_toEndOf="@+id/checkBox"
-        app:layout_constraintTop_toBottomOf="@+id/quickContactBadge" />
+        android:layout_toRightOf="@+id/beardCheckBox"
+        android:layout_below="@+id/contactImage"/>
 
-</android.support.constraint.ConstraintLayout>
+    <GridView
+        android:id="@+id/gridViewGallery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:clickable="true"
+        android:columnWidth="100dp"
+        android:focusable="true"
+        android:gravity="center"
+        android:numColumns="auto_fit"
+        android:stretchMode="spacingWidthUniform"
+        android:verticalSpacing="5dp"
+        android:paddingBottom="10dp"
+        android:layout_below="@id/glassCheckBox"/>
+</RelativeLayout>
