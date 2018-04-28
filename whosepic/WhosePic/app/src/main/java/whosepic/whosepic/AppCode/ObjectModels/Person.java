@@ -1,6 +1,7 @@
 package whosepic.whosepic.AppCode.ObjectModels;
 
 import java.io.Serializable;
+import io.realm.RealmObject;
 
 /**
  * Created by emintosun on 2.12.2017.

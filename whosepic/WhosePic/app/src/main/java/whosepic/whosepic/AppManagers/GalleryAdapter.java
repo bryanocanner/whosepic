@@ -85,7 +85,7 @@ public class GalleryAdapter extends BaseAdapter {
      *            the context
      * @return ArrayList with images Path
      */
-    private ArrayList<Image> getAllShownImagesPath(Context context) {
+    public static ArrayList<Image> getAllShownImagesPath(Context context) {
         Uri uri;
         Cursor cursor;
         int column_index_data, column_index_folder_name;
