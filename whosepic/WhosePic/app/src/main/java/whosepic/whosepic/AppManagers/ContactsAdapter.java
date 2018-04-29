@@ -49,7 +49,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
             Uri uri = Uri.parse(person.getContactImagePath());
             holder.ivContactImage.setImageURI(uri);
         } else {
-            holder.ivContactImage.setImageResource(R.mipmap.aa_round);
+            holder.ivContactImage.setImageResource(R.mipmap.empty_contact);
         }
         holder.tvContactName.setText(person.getContactName());
         holder.tvPhoneNumber.setText(person.getContactNumber());

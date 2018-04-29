@@ -66,7 +66,7 @@ public class AlbumsAdapter extends BaseAdapter {
         } else {
             picturesView = (ImageView) convertView;
         }
-            picturesView.setImageResource(R.mipmap.if_icon_folder_211608);
+            picturesView.setImageResource(R.mipmap.if_folder_33694);
         return picturesView;
     }
 
