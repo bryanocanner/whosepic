@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <QuickContactBadge
+        android:id="@+id/albumImage2"
+        android:layout_width="100dp"
+        android:layout_height="102dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@mipmap/if_icon_folder_211608"
+        app:srcCompat="@mipmap/aa" />
+
+    <TextView
+        android:id="@+id/albumName2"
+        android:layout_width="209dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:textSize="20dp"
+        android:text="Contact Name"
+        android:layout_toRightOf="@+id/albumImage2" />
+
+    <GridView
+        android:id="@+id/gridViewAlbum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:clickable="true"
+        android:columnWidth="100dp"
+        android:focusable="true"
+        android:gravity="center"
+        android:numColumns="auto_fit"
+        android:stretchMode="spacingWidthUniform"
+        android:verticalSpacing="5dp"
+        android:paddingBottom="10dp"
+        android:layout_below="@id/albumImage2"/>
+</RelativeLayout>

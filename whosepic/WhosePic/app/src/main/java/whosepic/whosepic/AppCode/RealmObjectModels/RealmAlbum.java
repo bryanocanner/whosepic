@@ -9,7 +9,6 @@ import whosepic.whosepic.AppCode.ObjectModels.Album;
  */
 
 public class RealmAlbum extends RealmObject {
-    @PrimaryKey
     private int id;
     private String name;
 

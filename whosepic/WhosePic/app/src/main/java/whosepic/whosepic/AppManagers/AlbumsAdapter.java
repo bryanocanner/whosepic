@@ -2,189 +2,78 @@ package whosepic.whosepic.AppManagers;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.Cursor;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.provider.MediaStore;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import com.bumptech.glide.*;
-
-import whosepic.whosepic.*;
+import whosepic.whosepic.AppCode.ObjectModels.Album;
+import whosepic.whosepic.AppCode.ObjectModels.Image;
 import whosepic.whosepic.R;
+import whosepic.whosepic.UI.AlbumActivity;
+import whosepic.whosepic.UI.ImagePreviewActivity;
 
 /**
  * Created by aligunes on 18/02/2018.
  */
 
-public class AlbumsAdapter extends BaseAdapter {
-    private Context context;
-    private int layoutResourceId;
+public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsViewHolder> {
     private ArrayList<Bitmap> data = new ArrayList<Bitmap>();
-    private ArrayList<String> albums;
+    private ArrayList<Album> albums;
+    Context mContext;
 
-    public AlbumsAdapter(Context context, ArrayList<String> albums, Activity activity) {
-        this.context = context;
+    public AlbumsAdapter(Context context, ArrayList<Album> albums, Activity activity) {
         this.albums = albums;
+        this.mContext = context;
     }
 
     // Todo: viewholder will be coded.
-    static class ViewHolder {
-        TextView imageTitle;
-        ImageView image;
-    }
+    public  class AlbumsViewHolder extends RecyclerView.ViewHolder{
 
-    // Todo: count will be coded again.
-    public int getCount() {
-        return 8;
-    }
+        ImageView albumImageView;
+        TextView albumName;
 
-    public Object getItem(int position) {
-        return position;
-    }
+        public AlbumsViewHolder(View itemView) {
+            super(itemView);
+            albumImageView = (ImageView) itemView.findViewById(R.id.albumImage);
+            albumName = (TextView) itemView.findViewById(R.id.albumName);
 
-    public long getItemId(int position) {
-        return position;
-    }
-
-    public View getView(final int position, View convertView,
-                        ViewGroup parent) {
-        ImageView picturesView;
-        if (convertView == null) {
-            picturesView = new ImageView(context);
-            picturesView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            picturesView.setLayoutParams(new GridView.LayoutParams(270, 270));
-        } else {
-            picturesView = (ImageView) convertView;
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, AlbumActivity.class);
+                    intent.putExtra("Album" , (Album) albums.get(getAdapterPosition()));
+                    mContext.startActivity(intent);
+                }
+            });
         }
-            picturesView.setImageResource(R.mipmap.if_folder_33694);
-        return picturesView;
     }
 
-    /**
-     * Getting All Images Path.
-     *
-     * @param activity
-     *            the activity
-     * @return ArrayList with images Path
-     */
-    private ArrayList<String> getAllShownImagesPath(Activity activity) {
-        Uri uri;
-        Cursor cursor;
-        int column_index_data, column_index_folder_name;
-        ArrayList<String> listOfAllImages = new ArrayList<String>();
-        String absolutePathOfImage = null;
-        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+    @Override
+    public AlbumsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.single_album_view, null);
+        AlbumsViewHolder albumsViewHolder = new AlbumsViewHolder(view);
+        return albumsViewHolder;
+    }
 
-        String[] projection = { MediaStore.MediaColumns.DATA,
-                MediaStore.Images.Media.BUCKET_DISPLAY_NAME };
-
-        cursor = activity.getContentResolver().query(uri, projection, null,
-                null, null);
-
-        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        column_index_folder_name = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-        while (cursor.moveToNext()) {
-            absolutePathOfImage = cursor.getString(column_index_data);
-
-            listOfAllImages.add(absolutePathOfImage);
+    @Override
+    public void onBindViewHolder(AlbumsViewHolder holder, int position) {
+        if(!albums.isEmpty()) {
+            Album album = albums.get(position);
+            holder.albumImageView.setImageResource(R.mipmap.if_folder_33694);
+            holder.albumName.setText(album.getName());
         }
-        return listOfAllImages;
     }
+
+    @Override
+    public int getItemCount() {
+        return albums.size();
+    }
+
 }
-
-
-//    /**
-//     * The Class ImageAdapter.
-//     */
-//    private class ImageAdapter extends BaseAdapter {
-//
-//        /** The context. */
-//        private Activity context;
-//
-//        /**
-//         * Instantiates a new image adapter.
-//         *
-//         * @param localContext
-//         *            the local context
-//         */
-//        public ImageAdapter(Activity localContext) {
-//            context = localContext;
-//            images = getAllShownImagesPath(context);
-//        }
-//
-//        public int getCount() {
-//            return images.size();
-//        }
-//
-//        public Object getItem(int position) {
-//            return position;
-//        }
-//
-//        public long getItemId(int position) {
-//            return position;
-//        }
-//
-//        public View getView(final int position, View convertView,
-//                            ViewGroup parent) {
-//            ImageView picturesView;
-//            if (convertView == null) {
-//                picturesView = new ImageView(context);
-//                picturesView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-//                picturesView
-//                        .setLayoutParams(new GridView.LayoutParams(270, 270));
-//
-//            } else {
-//                picturesView = (ImageView) convertView;
-//            }
-//
-//            Glide.with(context).load(images.get(position))
-//                    .placeholder(R.drawable.ic_launcher).centerCrop()
-//                    .into(picturesView);
-//
-//            return picturesView;
-//        }
-//
-//        /**
-//         * Getting All Images Path.
-//         *
-//         * @param activity
-//         *            the activity
-//         * @return ArrayList with images Path
-//         */
-//        private ArrayList<String> getAllShownImagesPath(Activity activity) {
-//            Uri uri;
-//            Cursor cursor;
-//            int column_index_data, column_index_folder_name;
-//            ArrayList<String> listOfAllImages = new ArrayList<String>();
-//            String absolutePathOfImage = null;
-//            uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-//
-//            String[] projection = { MediaColumns.DATA,
-//                    MediaStore.Images.Media.BUCKET_DISPLAY_NAME };
-//
-//            cursor = activity.getContentResolver().query(uri, projection, null,
-//                    null, null);
-//
-//            column_index_data = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
-//            column_index_folder_name = cursor
-//                    .getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-//            while (cursor.moveToNext()) {
-//                absolutePathOfImage = cursor.getString(column_index_data);
-//
-//                listOfAllImages.add(absolutePathOfImage);
-//            }
-//            return listOfAllImages;
-//        }
-//    }
-//}

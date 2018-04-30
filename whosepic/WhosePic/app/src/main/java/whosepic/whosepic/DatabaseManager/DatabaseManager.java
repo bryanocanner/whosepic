@@ -77,10 +77,10 @@ public class DatabaseManager {
         return albums;
     }
 
-    public Album getAlbum(int id) {
+    public Album getAlbum(String name) {
         ArrayList<Image> images = new ArrayList<Image>();
-        RealmAlbum ra = realm.where(RealmAlbum.class).equalTo("id", id).findFirst();
-        RealmResults<RealmAlbumImage> rais = realm.where(RealmAlbumImage.class).equalTo("albumId", id).findAll();
+        RealmAlbum ra = realm.where(RealmAlbum.class).equalTo("name", name).findFirst();
+        RealmResults<RealmAlbumImage> rais = realm.where(RealmAlbumImage.class).equalTo("albumId", ra.getId()).findAll();
         for (RealmAlbumImage rai : rais) {
             RealmImage img = realm.where(RealmImage.class).equalTo("id", rai.getImageId()).findFirst();
             images.add(new Image(img.getPath()));

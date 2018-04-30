@@ -1,12 +1,13 @@
 package whosepic.whosepic.AppCode.ObjectModels;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by aligunes on 08/04/2018.
  */
 
-public class Album {
+public class Album implements Serializable {
     private String name;
     private ArrayList<Image> images;
 
@@ -22,5 +23,8 @@ public class Album {
 
     public String getName() {
         return name;
+    }
+    public ArrayList<Image> getImages(){
+        return images;
     }
 }

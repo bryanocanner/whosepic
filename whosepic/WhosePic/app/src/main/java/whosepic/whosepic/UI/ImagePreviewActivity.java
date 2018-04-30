@@ -1,17 +1,25 @@
 package whosepic.whosepic.UI;
 
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import whosepic.whosepic.AppCode.ObjectModels.Album;
 import whosepic.whosepic.AppCode.ObjectModels.Image;
 import whosepic.whosepic.AppCode.ObjectModels.Person;
 import whosepic.whosepic.AppManagers.ImageAdapter;
+import whosepic.whosepic.DatabaseManager.DatabaseManager;
 import whosepic.whosepic.R;
 import whosepic.whosepic.UI.Views.SquareImageView;
 
@@ -24,6 +32,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
     private Image image;
     ActionBar actionBar;
     Person person;
+    DatabaseManager databaseManager = DatabaseManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +75,30 @@ public class ImagePreviewActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_add_to_album:
                 // User chose the "Settings" item, show the app settings UI...
+                AlertDialog.Builder builderSingle = new AlertDialog.Builder(ImagePreviewActivity.this);
+                builderSingle.setTitle("Choose the album");
+
+                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ImagePreviewActivity.this, android.R.layout.select_dialog_item);
+                final ArrayList<Album> albums = databaseManager.getDummyAlbums();
+                for (Album a : albums)
+                    arrayAdapter.add(a.getName());
+
+                builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        databaseManager.setImageToAlbum(findAlbum(arrayAdapter.getItem(which),albums), image);
+                        Toast.makeText(ImagePreviewActivity.this, "Picture is added to album", Toast.LENGTH_LONG).show();
+                    }
+                });
+                builderSingle.show();
+
                 return true;
 
             default:
@@ -79,5 +112,12 @@ public class ImagePreviewActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    private Album findAlbum(String name, ArrayList<Album> albums) {
+        for(Album a : albums)
+            if(a.getName().equals(name))
+                return a;
+        return null;
     }
 }
