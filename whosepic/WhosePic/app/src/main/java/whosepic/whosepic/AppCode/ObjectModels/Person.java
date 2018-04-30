@@ -10,11 +10,13 @@ public class Person implements Serializable {
     private String ContactImagePath;
     private String ContactName;
     private String ContactNumber;
+    private long     id;
 
-    public Person (String name, String number, String path) {
+    public Person (String name, String number, String path, long id) {
         ContactImagePath = path;
         ContactName = name;
         ContactNumber = number;
+        this.id=id;
     }
 
     public String getContactImagePath() {
@@ -41,4 +43,11 @@ public class Person implements Serializable {
         ContactNumber = contactNumber;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }

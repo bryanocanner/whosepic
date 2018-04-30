@@ -112,7 +112,7 @@ public class ContactsActivity extends AppCompatActivity implements ContactsAdapt
         List<Contact> contacts = q.find();
         for (Contact c : contacts) {
             personList.add(new Person(c.getDisplayName(), c.getPhoneNumbers().get(0).getNumber(),
-                    c.getPhotoUri() != null ? c.getPhotoUri() : null));
+                    c.getPhotoUri() != null ? c.getPhotoUri() : null,c.getId()));
         }
         // Todo: sort personlist api 24 required.
         /*personList.sort(new Comparator<Person>() {

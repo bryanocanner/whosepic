@@ -1,8 +1,10 @@
 package whosepic.whosepic.UI;
 
+import android.content.ContentUris;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -68,7 +70,16 @@ public class ImageOverviewActivity extends AppCompatActivity {
             ivContactImage.setImageURI(uri);
         } else {
             ivContactImage.setImageResource(R.mipmap.empty_contact);
+            ivContactImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_EDIT);
+                    intent.setData(ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,person.getId()));
+                    startActivity(intent);
+                }
+            });
         }
+
 
     }
 
