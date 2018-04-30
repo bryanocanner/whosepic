@@ -1,12 +1,14 @@
 package whosepic.whosepic.UI;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,7 @@ public class ImageOverviewActivity extends AppCompatActivity {
     private GridView gridView;
     private TextView nameView;
     private TextView numberView;
+    private ImageView  ivContactImage;
     private GalleryAdapter galleryAdapter;
     private Person person;
     ActionBar actionBar;
@@ -41,6 +44,7 @@ public class ImageOverviewActivity extends AppCompatActivity {
         numberView = (TextView) findViewById(R.id.phoneNumberView);
         nameView.setText(person.getContactName());
         numberView.setText(person.getContactNumber());
+        ivContactImage = (ImageView) findViewById(R.id.contactImage);
 
         gridView = (GridView) findViewById(R.id.gridViewGallery);
         galleryAdapter = new GalleryAdapter(this.getApplicationContext());
@@ -59,6 +63,12 @@ public class ImageOverviewActivity extends AppCompatActivity {
                 }
             }
         });
+        if (person.getContactImagePath() != null) {
+            Uri uri = Uri.parse(person.getContactImagePath());
+            ivContactImage.setImageURI(uri);
+        } else {
+            ivContactImage.setImageResource(R.mipmap.empty_contact);
+        }
 
     }
 

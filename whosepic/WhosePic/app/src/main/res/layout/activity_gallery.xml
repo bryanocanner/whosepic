@@ -11,8 +11,7 @@
         android:layout_height="102dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:background="@mipmap/aa_round"
-        app:srcCompat="@mipmap/aa" />
+         />
 
     <TextView
         android:id="@+id/contactName"
