@@ -70,6 +70,7 @@ public class AlbumsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.preview_menu, menu);
+
         return true;
     }
 

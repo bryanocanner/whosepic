@@ -6,7 +6,7 @@ android {
     buildToolsVersion "27.0.2"
     defaultConfig {
         applicationId "whosepic.whosepic"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 26
         versionCode 1
         multiDexEnabled true

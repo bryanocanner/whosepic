@@ -66,7 +66,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
     public void onBindViewHolder(AlbumsViewHolder holder, int position) {
         if(!albums.isEmpty()) {
             Album album = albums.get(position);
-            holder.albumImageView.setImageResource(R.mipmap.if_folder_33694);
+            holder.albumImageView.setImageResource(R.drawable.ic_folder);
             holder.albumName.setText(album.getName());
         }
     }

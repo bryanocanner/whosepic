@@ -32,6 +32,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
     private Image image;
     ActionBar actionBar;
     Person person;
+    boolean adding;
     DatabaseManager databaseManager = DatabaseManager.getInstance();
 
     @Override
@@ -47,6 +48,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
         person = (Person) (getIntent().getExtras().getSerializable("person"));
         imageView = findViewById(R.id.previewedImage);
         imageView.setImageURI(Uri.parse(image.getPath()));
+        adding = (boolean) (getIntent().getBooleanExtra("Adding",true));
         /*gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -67,6 +69,10 @@ public class ImagePreviewActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.preview_menu, menu);
+        if(adding)
+            menu.getItem(0).setVisible(false);
+        else
+            menu.getItem(0).setVisible(true);
         return true;
     }
 
@@ -93,8 +99,21 @@ public class ImagePreviewActivity extends AppCompatActivity {
                 builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        databaseManager.setImageToAlbum(findAlbum(arrayAdapter.getItem(which),albums), image);
-                        Toast.makeText(ImagePreviewActivity.this, "Picture is added to album", Toast.LENGTH_LONG).show();
+                        Album album = databaseManager.getAlbum(arrayAdapter.getItem(which));
+                        boolean added = true;
+                        if(album.getImages() != null) {
+                            for (int i = 0; i < album.getImages().size(); i++) {
+                                String s = album.getImages().get(i).getPath();
+                                if (s.equals(image.getPath()))
+                                    added = false;
+                            }
+                        }
+                        if (added) {
+                            databaseManager.setImageToAlbum(findAlbum(arrayAdapter.getItem(which), albums), image);
+                            Toast.makeText(ImagePreviewActivity.this, "Picture is added to album", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(ImagePreviewActivity.this, "Picture cant be added to album", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
                 builderSingle.show();

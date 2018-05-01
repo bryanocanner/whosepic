@@ -1,5 +1,8 @@
 package whosepic.whosepic.AppManagers;
 
+/**
+ * Created by emintosun on 1.05.2018.
+ */
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -26,19 +29,13 @@ import whosepic.whosepic.AppCode.ObjectModels.Image;
 import whosepic.whosepic.R;
 import whosepic.whosepic.UI.Views.SquareImageView;
 
-/**
- * Created by aligunes on 18/02/2018.
- */
-
-public class GalleryAdapter extends BaseAdapter {
+public class SimilarImagesAdapter extends BaseAdapter {
     private Context context;
     public ArrayList<Image> images;
-    public ArrayList<Image> selectedImages;
 
-    public GalleryAdapter(Context context,ArrayList<Image> images, ArrayList<Image> selectedImages) {
+    public SimilarImagesAdapter(Context context,ArrayList<Image> images) {
         this.context = context;
         this.images = images;
-        this.selectedImages = selectedImages;
     }
 
 
@@ -72,10 +69,6 @@ public class GalleryAdapter extends BaseAdapter {
             picturesView.setScaleType(ImageView.ScaleType.CENTER);
             picturesView.setPadding(8,8,8,8);
         }
-        if(selectedImages.contains(images.get(position)))
-            picturesView.setForeground(context.getResources().getDrawable(R.drawable.if_misc_tick__1276844));
-        else
-            picturesView.setForeground(null);
 
         Glide.with(context).load(images.get(position).getPath())
                 .into(picturesView);

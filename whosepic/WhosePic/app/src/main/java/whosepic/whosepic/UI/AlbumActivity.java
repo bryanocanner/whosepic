@@ -59,6 +59,7 @@ public class AlbumActivity extends AppCompatActivity {
                 if (albumAdapter.getImages() != null && !albumAdapter.getImages().isEmpty()) {
                     Intent intent = new Intent(getApplicationContext(), ImagePreviewActivity.class);
                     intent.putExtra("Image", (Image) albumAdapter.getImages().get(position));
+                    intent.putExtra("Adding", true);
                     startActivity(intent);
                 }
             }

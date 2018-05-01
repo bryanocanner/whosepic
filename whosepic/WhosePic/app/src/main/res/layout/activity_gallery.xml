@@ -32,6 +32,16 @@
         android:layout_toRightOf="@id/contactImage"
         android:layout_below="@id/contactName"/>
 
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="207dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="11dp"
+        android:text="Choose 3 pictures f"
+        android:visibility="visible"
+        android:layout_below="@id/contactImage"/>
+
     <GridView
         android:id="@+id/gridViewGallery"
         android:layout_width="wrap_content"
@@ -45,5 +55,5 @@
         android:stretchMode="spacingWidthUniform"
         android:verticalSpacing="5dp"
         android:paddingBottom="10dp"
-        android:layout_below="@id/contactImage"/>
+        android:layout_below="@id/text"/>
 </RelativeLayout>
