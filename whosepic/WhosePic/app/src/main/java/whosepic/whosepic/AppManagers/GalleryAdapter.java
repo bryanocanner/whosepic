@@ -5,7 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +61,7 @@ public class GalleryAdapter extends BaseAdapter {
         return position;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public View getView(final int position, View convertView,
                         ViewGroup parent) {
         SquareImageView picturesView;
@@ -79,7 +82,6 @@ public class GalleryAdapter extends BaseAdapter {
 
         Glide.with(context).load(images.get(position).getPath())
                 .into(picturesView);
-
         return picturesView;
     }
 

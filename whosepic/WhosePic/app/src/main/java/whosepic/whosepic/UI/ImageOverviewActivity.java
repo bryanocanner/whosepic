@@ -14,6 +14,7 @@ import android.provider.ContactsContract;
 
 import android.provider.MediaStore;
 
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ActionMode;
@@ -51,6 +52,7 @@ public class ImageOverviewActivity extends AppCompatActivity {
     ArrayList<Image> multiselect_list = new ArrayList<>();
     boolean isMultiSelect = false;
     Menu context_menu;
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,12 @@ public class ImageOverviewActivity extends AppCompatActivity {
         numberView.setText(person.getContactNumber());
         ivContactImage = (ImageView) findViewById(R.id.contactImage);
         imageList = getAllShownImagesPath(this);
+
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
+
+        viewPager.setAdapter(viewPagerAdapter);
         gridView = (GridView) findViewById(R.id.gridViewGallery);
         galleryAdapter = new GalleryAdapter(this.getApplicationContext(),imageList,multiselect_list);
         gridView.setAdapter(galleryAdapter);

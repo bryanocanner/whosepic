@@ -3,6 +3,7 @@ package whosepic.whosepic.UI;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +35,8 @@ public class ImagePreviewActivity extends AppCompatActivity {
     Person person;
     boolean adding;
     DatabaseManager databaseManager = DatabaseManager.getInstance();
+    ViewPager viewPager;
+    ArrayList<Image> images;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,14 @@ public class ImagePreviewActivity extends AppCompatActivity {
         imageView = findViewById(R.id.previewedImage);
         imageView.setImageURI(Uri.parse(image.getPath()));
         adding = (boolean) (getIntent().getBooleanExtra("Adding",true));
+       // imageView = findViewById(R.id.previewedImage);
+        //imageView.setImageURI(Uri.parse(image.getPath()));
+
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this.getApplicationContext());
+
+        viewPager.setAdapter(viewPagerAdapter);
         /*gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
