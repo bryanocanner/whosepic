@@ -5,6 +5,7 @@ package whosepic.whosepic.AppManagers;
  */
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -49,7 +50,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
             Uri uri = Uri.parse(person.getContactImagePath());
             holder.ivContactImage.setImageURI(uri);
         } else {
-            holder.ivContactImage.setImageResource(R.mipmap.empty_contact);
+            holder.ivContactImage.setImageResource(R.drawable.default_profile);
         }
         holder.tvContactName.setText(person.getContactName());
         holder.tvPhoneNumber.setText(person.getContactNumber());
@@ -109,6 +110,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
             tvContactName = (TextView) itemView.findViewById(R.id.tvContactName);
             tvPhoneNumber = (TextView) itemView.findViewById(R.id.tvPhoneNumber);
 
+            ivContactImage.setPadding(0,10,0,10);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

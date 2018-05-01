@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         context = getApplicationContext();
 
         setContentView(R.layout.activity_main);
+        /*
         Button goList = (Button) findViewById(R.id.goListButton);
         Button goAlbums = (Button) findViewById(R.id.goAlbumsButton);
         goList.setText("ContactList");
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             startActivity(new Intent(MainActivity.this,InfoActivity.class));
         }
-
+        */
         BoomMenuButton bmb = (BoomMenuButton) findViewById(R.id.bmb);
         bmb.setButtonEnum(ButtonEnum.TextInsideCircle);
         bmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_3_1);
@@ -104,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
         infoBuilder.normalImageRes(R.drawable.about);
         bmb.addBuilder(infoBuilder);
 
-        goAlbums.setVisibility(View.INVISIBLE);
-        goList.setVisibility(View.INVISIBLE);
+        //goAlbums.setVisibility(View.VISIBLE);
+        //goList.setVisibility(View.VISIBLE);
     }
 
     private void requestPermission() {

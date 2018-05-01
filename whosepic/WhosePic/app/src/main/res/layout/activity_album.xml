@@ -11,8 +11,7 @@
         android:layout_height="102dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:background="@mipmap/if_icon_folder_211608"
-        app:srcCompat="@mipmap/aa" />
+        android:background="@mipmap/if_icon_folder_211608" />
 
     <TextView
         android:id="@+id/albumName2"

@@ -69,7 +69,7 @@ public class ImageOverviewActivity extends AppCompatActivity {
             Uri uri = Uri.parse(person.getContactImagePath());
             ivContactImage.setImageURI(uri);
         } else {
-            ivContactImage.setImageResource(R.mipmap.empty_contact);
+            ivContactImage.setImageResource(R.drawable.default_profile);
             ivContactImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
