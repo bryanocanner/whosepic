@@ -123,4 +123,13 @@ public class DatabaseManager {
             deleteImage(img);
         }
     }
+
+    public void deleteAlbum(Album album){
+        realm.beginTransaction();
+        RealmAlbum ra = realm.where(RealmAlbum.class).equalTo("name", album.getName()).findFirst();
+        RealmResults<RealmAlbumImage> rai = realm.where(RealmAlbumImage.class).equalTo("albumId", ra.getId()).findAll();
+        ra.deleteFromRealm();
+        rai.deleteAllFromRealm();
+        realm.commitTransaction();
+    }
 }
