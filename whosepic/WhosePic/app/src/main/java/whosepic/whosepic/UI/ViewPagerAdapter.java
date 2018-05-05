@@ -17,17 +17,18 @@ import java.util.ArrayList;
 import whosepic.whosepic.AppCode.ObjectModels.Image;
 import whosepic.whosepic.R;
 
-import static whosepic.whosepic.AppManagers.GalleryAdapter.getAllShownImagesPath;
 
 public class ViewPagerAdapter extends PagerAdapter {
 
     private Context context;
     private LayoutInflater layoutInflater;
     private ArrayList<Image> images;
+    private Image image;
 
-    public ViewPagerAdapter(Context context) {
+    public ViewPagerAdapter(Context context,ArrayList<Image> images,Image image) {
         this.context = context;
-        this.images = getAllShownImagesPath(context);
+        this.images = images;
+        this.image = image;
     }
 
     @Override

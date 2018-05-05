@@ -48,7 +48,8 @@ public class AlbumActivity extends AppCompatActivity {
         nameView.setText(album.getName());
 
         gridView = (GridView) findViewById(R.id.gridViewAlbum);
-        albumAdapter = new AlbumAdapter(this, databaseManager.getAlbum(album.getName()).getImages());
+        album.setImages(databaseManager.getAlbum(album.getName()).getImages());
+        albumAdapter = new AlbumAdapter(this, album.getImages());
         gridView.setAdapter(albumAdapter);
         gridView.setNumColumns(3);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -60,6 +61,7 @@ public class AlbumActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), ImagePreviewActivity.class);
                     intent.putExtra("Image", (Image) albumAdapter.getImages().get(position));
                     intent.putExtra("Adding", true);
+                    intent.putExtra("images",album.getImages());
                     startActivity(intent);
                 }
             }

@@ -21,6 +21,9 @@ public class Album implements Serializable {
         this.images = images;
     }
 
+    public void setImages(ArrayList<Image> images){
+        this.images = images;
+    }
     public String getName() {
         return name;
     }

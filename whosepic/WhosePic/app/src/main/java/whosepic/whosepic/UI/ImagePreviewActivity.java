@@ -37,6 +37,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
     DatabaseManager databaseManager = DatabaseManager.getInstance();
     ViewPager viewPager;
     ArrayList<Image> images;
+    int currentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,16 +51,19 @@ public class ImagePreviewActivity extends AppCompatActivity {
         image = (Image) (getIntent().getExtras().getSerializable("Image"));
         person = (Person) (getIntent().getExtras().getSerializable("person"));
         imageView = findViewById(R.id.previewedImage);
-        imageView.setImageURI(Uri.parse(image.getPath()));
+       // imageView.setImageURI(Uri.parse(image.getPath()));
         adding = (boolean) (getIntent().getBooleanExtra("Adding",true));
+        images = (ArrayList<Image>) (getIntent().getExtras().getSerializable("images"));
+        currentPosition=(int) (getIntent().getIntExtra("position",0));
        // imageView = findViewById(R.id.previewedImage);
         //imageView.setImageURI(Uri.parse(image.getPath()));
 
         viewPager = (ViewPager) findViewById(R.id.viewPager);
-
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this.getApplicationContext());
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this.getApplicationContext(),images,image);
+       // viewPager.setCurrentItem(viewPagerAdapter.getItemPosition(image));
 
         viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setCurrentItem(currentPosition);
         /*gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override

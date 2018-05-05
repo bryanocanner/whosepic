@@ -69,11 +69,6 @@ public class ImageOverviewActivity extends AppCompatActivity {
         ivContactImage = (ImageView) findViewById(R.id.contactImage);
         imageList = getAllShownImagesPath(this);
 
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
-
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
-
-        viewPager.setAdapter(viewPagerAdapter);
         gridView = (GridView) findViewById(R.id.gridViewGallery);
         galleryAdapter = new GalleryAdapter(this.getApplicationContext(),imageList,multiselect_list);
         gridView.setAdapter(galleryAdapter);
@@ -89,8 +84,10 @@ public class ImageOverviewActivity extends AppCompatActivity {
                     if (galleryAdapter.getImages() != null && !galleryAdapter.getImages().isEmpty()) {
                         Intent intent = new Intent(getApplicationContext(), ImagePreviewActivity.class);
                         intent.putExtra("Image", (Image) galleryAdapter.getImages().get(position));
+                        intent.putExtra("position",position);
                         intent.putExtra("person", person);
                         intent.putExtra("Adding", false);
+                        intent.putExtra("images",imageList);
                         startActivity(intent);
                     }
                 }
@@ -217,10 +214,12 @@ public class ImageOverviewActivity extends AppCompatActivity {
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
         column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-        while (cursor.moveToNext()) {
+        int i = 0;
+        while (cursor.moveToNext() && i < 100) {
             absolutePathOfImage = cursor.getString(column_index_data);
 
             listOfAllImages.add(new Image(absolutePathOfImage));
+            i++;
         }
         return listOfAllImages;
     }
