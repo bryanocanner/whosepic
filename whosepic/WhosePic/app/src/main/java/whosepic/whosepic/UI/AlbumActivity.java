@@ -62,6 +62,7 @@ public class AlbumActivity extends AppCompatActivity {
                     intent.putExtra("Image", (Image) albumAdapter.getImages().get(position));
                     intent.putExtra("Adding", true);
                     intent.putExtra("images",album.getImages());
+                    intent.putExtra("position",position);
                     startActivity(intent);
                 }
             }
