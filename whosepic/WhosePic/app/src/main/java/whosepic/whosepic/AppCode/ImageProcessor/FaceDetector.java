@@ -5,4 +5,5 @@ package whosepic.whosepic.AppCode.ImageProcessor;
  */
 
 public class FaceDetector {
+    public native static float[][][] faceDetection(long addrRgba );
 }
