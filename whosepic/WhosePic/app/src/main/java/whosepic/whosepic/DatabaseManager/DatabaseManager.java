@@ -1,9 +1,12 @@
 package whosepic.whosepic.DatabaseManager;
 
 import android.app.Application;
+
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 import whosepic.whosepic.AppCode.ObjectModels.*;
 import whosepic.whosepic.AppCode.RealmObjectModels.*;
@@ -20,7 +23,6 @@ public class DatabaseManager {
         Realm.init(app);
         RealmConfiguration configuration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
         Realm.setDefaultConfiguration(configuration);
-        realm = Realm.getDefaultInstance();
     }
 
     public static void createInstance(Application app) {
@@ -28,6 +30,7 @@ public class DatabaseManager {
     }
 
     public static DatabaseManager getInstance() {
+        dbManager.realm = Realm.getDefaultInstance();
         return dbManager;
     }
 
@@ -37,14 +40,22 @@ public class DatabaseManager {
         ra.setId(generateId(RealmAlbum.class));
         ra.setAlbum(album);
         realm.commitTransaction();
+        realm.close();
     }
 
-    public void setImage(Image img) {
+    public void setImage(Image img, boolean isProcessed, boolean isMapped) {
         realm.beginTransaction();
-        RealmImage ri = realm.createObject(RealmImage.class);
-        ri.setId(generateId(RealmImage.class));
+        RealmImage ri = realm.where(RealmImage.class).equalTo("path", img.getPath()).findFirst();
+        if (ri == null) {
+            ri = new RealmImage();
+            ri.setId(generateId(RealmImage.class));
+        }
         ri.setImage(img);
+        ri.setProcessed(isProcessed);
+        ri.setMapped(isMapped);
+        realm.insertOrUpdate(ri);
         realm.commitTransaction();
+        realm.close();
     }
 
     public void deleteImage(Image img) {
@@ -52,6 +63,7 @@ public class DatabaseManager {
         RealmImage ri = realm.where(RealmImage.class).equalTo("path", img.getPath()).findFirst();
         ri.deleteFromRealm();
         realm.commitTransaction();
+        realm.close();
     }
 
     public void setImageToAlbum(Album album, Image img) {
@@ -62,10 +74,76 @@ public class DatabaseManager {
         rai.setAlbumId(ra.getId());
         rai.setImageId(ri.getId());
         realm.commitTransaction();
+        realm.close();
     }
 
     public void setPerson(Person person) {
 
+    }
+
+    public void setFace(FaceInfo face, Image img) {
+        RealmImage ri = realm.where(RealmImage.class).equalTo("path", img.getPath()).findFirst();
+        realm.beginTransaction();
+        RealmFace rf = realm.createObject(RealmFace.class);
+        rf.setId(generateId(RealmFace.class));
+        rf.setImageId(ri.getId());
+        rf.setInfo(face);
+        realm.commitTransaction();
+        realm.close();
+    }
+
+    public void updateFace(FaceInfo face, Person person) {
+        RealmFace rf = realm.where(RealmFace.class).equalTo("id", face.getId()).findFirst();
+        realm.beginTransaction();
+        rf.setPersonId((int)person.getId());
+        realm.commitTransaction();
+        realm.close();
+    }
+
+    public void setSimilarity(Image img1, Image img2) {
+        RealmImage ri1 = realm.where(RealmImage.class).equalTo("path", img1.getPath()).findFirst();
+        RealmImage ri2 = realm.where(RealmImage.class).equalTo("path", img2.getPath()).findFirst();
+        realm.beginTransaction();
+        RealmSimilarity rs = realm.createObject(RealmSimilarity.class);
+        rs.setImageId1(ri1.getId());
+        rs.setImageId2(ri2.getId());
+        realm.commitTransaction();
+        realm.close();
+    }
+
+    public ArrayList<Image> getSimilarImages(ArrayList<Image> images) {
+        ArrayList<Image> resultSet = new ArrayList<Image>();
+        for (Image img : images) {
+            RealmImage ri = realm.where(RealmImage.class).equalTo("path", img.getPath()).findFirst();
+            RealmResults<RealmSimilarity> similarities
+                    = realm.where(RealmSimilarity.class).equalTo("imageId1", ri.getId()).findAll();
+            ArrayList<Image> result1 = new ArrayList<Image>();
+            ArrayList<Image> result2 = (ArrayList<Image>) resultSet.clone();
+            for (int i = 0; i < similarities.size(); i++) {
+                RealmImage ri2 = realm.where(RealmImage.class).equalTo("id", similarities.get(i).getImageId2()).findFirst();
+                result1.add(new Image(ri2.getPath()));
+            }
+            resultSet.addAll(result1);
+            result2.removeAll(result1);
+            //resultSet.removeAll(result2);
+        }
+        resultSet.removeAll(images);
+        resultSet.addAll(0, images);
+        realm.close();
+        return resultSet;
+    }
+
+    public ArrayList<FaceInfo> getFaces(Image img) {
+        ArrayList<FaceInfo> faceInfos = new ArrayList<>();
+        RealmImage ri = realm.where(RealmImage.class).equalTo("path", img.getPath()).findFirst();
+        RealmResults<RealmFace> faces = realm.where(RealmFace.class).equalTo("imageId", ri.getId()).findAll();
+        for (RealmFace rf : faces) {
+            FaceInfo face = rf.getInfo();
+            face.setId(rf.getId());
+            faceInfos.add(face);
+        }
+        realm.close();
+        return faceInfos;
     }
 
     public ArrayList<Album> getDummyAlbums() {
@@ -74,6 +152,7 @@ public class DatabaseManager {
         for (RealmAlbum ra : realmAlbums) {
             albums.add(new Album(ra.getName()));
         }
+        realm.close();
         return albums;
     }
 
@@ -85,14 +164,36 @@ public class DatabaseManager {
             RealmImage img = realm.where(RealmImage.class).equalTo("id", rai.getImageId()).findFirst();
             images.add(new Image(img.getPath()));
         }
-        return new Album(ra.getName(), images);
+        String newName = ra.getName();
+        realm.close();
+        return new Album(newName, images);
     }
 
     public ArrayList<Image> getImagesOfPerson() {
         return null;
     }
 
-    public int generateId(Class c) {
+    public ArrayList<Image> getUnprocessedImages() {
+        RealmResults<RealmImage> images = realm.where(RealmImage.class).equalTo("isProcessed", false).findAll();
+        ArrayList<Image> allImages = new ArrayList<Image>();
+        for (RealmImage ri : images) {
+            allImages.add(new Image(ri.getPath()));
+        }
+        realm.close();
+        return allImages;
+    }
+
+    public ArrayList<Image> getUnmappedImages() {
+        RealmResults<RealmImage> images = realm.where(RealmImage.class).equalTo("isMapped", false).findAll();
+        ArrayList<Image> allImages = new ArrayList<Image>();
+        for (RealmImage ri : images) {
+            allImages.add(new Image(ri.getPath()));
+        }
+        realm.close();
+        return allImages;
+    }
+
+    private int generateId(Class c) {
         Number currentIdNum = realm.where(c).max("id");
         int nextId;
         if(currentIdNum == null) {
@@ -109,19 +210,35 @@ public class DatabaseManager {
         for (RealmImage ri : images) {
             allImages.add(new Image(ri.getPath()));
         }
+        realm.close();
         return allImages;
     }
 
-    public void setImageList(ArrayList<Image> images) {
+    public void setInitialImageList(ArrayList<Image> images) {
+        realm.beginTransaction();
         for (Image img : images) {
-            setImage(img);
+            RealmImage ri = realm.where(RealmImage.class).equalTo("path", img.getPath()).findFirst();
+            if (ri == null) {
+                ri = new RealmImage();
+                ri.setId(generateId(RealmImage.class));
+            }
+            ri.setImage(img);
+            ri.setProcessed(false);
+            ri.setMapped(false);
+            realm.insertOrUpdate(ri);
         }
+        realm.commitTransaction();
+        realm.close();
     }
 
     public void deleteImageList(ArrayList<Image> images) {
+        realm.beginTransaction();
         for (Image img : images) {
-            deleteImage(img);
+            RealmImage ri = realm.where(RealmImage.class).equalTo("path", img.getPath()).findFirst();
+            ri.deleteFromRealm();
         }
+        realm.commitTransaction();
+        realm.close();
     }
 
     public void deleteAlbum(Album album){
@@ -131,5 +248,6 @@ public class DatabaseManager {
         ra.deleteFromRealm();
         rai.deleteAllFromRealm();
         realm.commitTransaction();
+        realm.close();
     }
 }

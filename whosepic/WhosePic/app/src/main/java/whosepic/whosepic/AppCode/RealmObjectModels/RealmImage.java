@@ -10,6 +10,8 @@ import whosepic.whosepic.AppCode.ObjectModels.Image;
 public class RealmImage extends RealmObject {
     private int id;
     private String path;
+    private boolean isProcessed;
+    private boolean isMapped;
 
     public void setId(int id) {
         this.id = id;
@@ -19,11 +21,27 @@ public class RealmImage extends RealmObject {
         this.path = img.getPath();
     }
 
+    public void setProcessed(boolean isProcessed) {
+        this.isProcessed = isProcessed;
+    }
+
+    public void setMapped(boolean isMapped) {
+        this.isMapped = isMapped;
+    }
+
     public int getId() {
         return id;
     }
 
     public String getPath() {
         return path;
+    }
+
+    public boolean getProcessed() {
+        return isProcessed;
+    }
+
+    public boolean getMapped() {
+        return isMapped;
     }
 }

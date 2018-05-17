@@ -12,6 +12,13 @@ android {
         multiDexEnabled true
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi-v7a", "x86_64"
+        }
+    }
+    sourceSets.main {
+        jniLibs.srcDir 'src/main/jniLibs'
+        jni.srcDirs = []
     }
     buildTypes {
         release {

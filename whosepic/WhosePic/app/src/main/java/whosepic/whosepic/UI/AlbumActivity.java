@@ -39,7 +39,6 @@ public class AlbumActivity extends AppCompatActivity {
     private AlbumAdapter albumAdapter;
     ActionBar actionBar;
     Album album;
-    DatabaseManager databaseManager = DatabaseManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +53,7 @@ public class AlbumActivity extends AppCompatActivity {
         context = this;
 
         gridView = (GridView) findViewById(R.id.gridViewAlbum);
-        album.setImages(databaseManager.getAlbum(album.getName()).getImages());
+        album.setImages(DatabaseManager.getInstance().getAlbum(album.getName()).getImages());
         albumAdapter = new AlbumAdapter(this, album.getImages());
         gridView.setAdapter(albumAdapter);
         gridView.setNumColumns(3);
@@ -87,7 +86,7 @@ public class AlbumActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_delete:
-                databaseManager.deleteAlbum(album);
+                DatabaseManager.getInstance().deleteAlbum(album);
                 Intent intent = new Intent(context,AlbumsActivity.class);
                 context.startActivity(intent);
 

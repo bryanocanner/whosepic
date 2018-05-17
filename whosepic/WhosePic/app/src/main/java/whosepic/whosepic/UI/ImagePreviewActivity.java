@@ -34,7 +34,6 @@ public class ImagePreviewActivity extends AppCompatActivity {
     ActionBar actionBar;
     Person person;
     boolean adding;
-    DatabaseManager databaseManager = DatabaseManager.getInstance();
     ViewPager viewPager;
     ArrayList<Image> images;
     int currentPosition;
@@ -100,7 +99,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
                 builderSingle.setTitle("Choose the album");
 
                 final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ImagePreviewActivity.this, android.R.layout.select_dialog_item);
-                final ArrayList<Album> albums = databaseManager.getDummyAlbums();
+                final ArrayList<Album> albums = DatabaseManager.getInstance().getDummyAlbums();
                 for (Album a : albums)
                     arrayAdapter.add(a.getName());
 
@@ -114,7 +113,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
                 builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Album album = databaseManager.getAlbum(arrayAdapter.getItem(which));
+                        Album album = DatabaseManager.getInstance().getAlbum(arrayAdapter.getItem(which));
                         boolean added = true;
                         if(album.getImages() != null) {
                             for (int i = 0; i < album.getImages().size(); i++) {
@@ -124,7 +123,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
                             }
                         }
                         if (added) {
-                            databaseManager.setImageToAlbum(findAlbum(arrayAdapter.getItem(which), albums), image);
+                            DatabaseManager.getInstance().setImageToAlbum(findAlbum(arrayAdapter.getItem(which), albums), image);
                             Toast.makeText(ImagePreviewActivity.this, "Picture is added to album", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(ImagePreviewActivity.this, "Picture cant be added to album", Toast.LENGTH_LONG).show();

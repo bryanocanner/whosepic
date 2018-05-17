@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import whosepic.whosepic.AppCode.ObjectModels.Image;
 import whosepic.whosepic.AppCode.ObjectModels.Person;
 import whosepic.whosepic.AppManagers.SimilarImagesAdapter;
+import whosepic.whosepic.DatabaseManager.DatabaseManager;
 import whosepic.whosepic.R;
 
 public class SimilarImagesActivity extends AppCompatActivity {
@@ -38,6 +39,7 @@ public class SimilarImagesActivity extends AppCompatActivity {
         actionBar.setDisplayShowHomeEnabled(true);
         person = (Person) (getIntent().getExtras().getSerializable("person"));
         imageList = (ArrayList<Image>)(getIntent().getExtras().getSerializable("Images"));
+        imageList = DatabaseManager.getInstance().getSimilarImages(imageList);
         textView = (TextView) findViewById(R.id.textView);
         gridView = (GridView) findViewById(R.id.gridImages);
         String s = person.getContactName() + "'s photos.";
@@ -55,6 +57,7 @@ public class SimilarImagesActivity extends AppCompatActivity {
                         intent.putExtra("Image", (Image) adapter.getImages().get(position));
                         intent.putExtra("person", person);
                         intent.putExtra("Adding", false);
+                        intent.putExtra("images", imageList);
                         startActivity(intent);
 
                 }

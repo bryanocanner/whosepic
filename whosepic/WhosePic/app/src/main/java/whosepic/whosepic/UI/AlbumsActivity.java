@@ -43,7 +43,6 @@ public class AlbumsActivity extends AppCompatActivity {
     private TextView noAlbums;
     ArrayList<Album> albums;
     private String m_Text = "";
-    DatabaseManager databaseManager = DatabaseManager.getInstance();
     ActionBar actionBar;
     Activity activity;
 
@@ -60,7 +59,7 @@ public class AlbumsActivity extends AppCompatActivity {
         gridManager = new GridLayoutManager(this,2);
         gridView.setLayoutManager(gridManager);
         gridView.setHasFixedSize(true);
-        albums = databaseManager.getDummyAlbums();
+        albums = DatabaseManager.getInstance().getDummyAlbums();
         gridAdapter = new AlbumsAdapter(this, albums, this);
         gridView.setAdapter(gridAdapter);
         noAlbums.setVisibility(gridView.getAdapter().getItemCount() > 0 ? View.GONE : View.VISIBLE);
@@ -96,7 +95,7 @@ public class AlbumsActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         if(isNameAvailable(input.getText().toString())) {
                             Album album = new Album(input.getText().toString());
-                            databaseManager.setAlbum(album);
+                            DatabaseManager.getInstance().setAlbum(album);
                             albums.add(album);
                             gridAdapter.notifyDataSetChanged();
                             if(noAlbums.getVisibility() == View.VISIBLE)

@@ -78,9 +78,13 @@ public class ImageOverviewActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                                     int position, long arg3) {
-                if (isMultiSelect)
+                if (isMultiSelect) {
                     multi_select(position);
-                else {
+                    /*if (multiselect_list.size() == 0) {
+                        mActionModeCallback.onDestroyActionMode(actionMode);
+                        context_menu = null;
+                    }*/
+                } else {
                     if (galleryAdapter.getImages() != null && !galleryAdapter.getImages().isEmpty()) {
                         Intent intent = new Intent(getApplicationContext(), ImagePreviewActivity.class);
                         intent.putExtra("Image", (Image) galleryAdapter.getImages().get(position));
@@ -105,7 +109,7 @@ public class ImageOverviewActivity extends AppCompatActivity {
                     }
                 }
 
-                multi_select(i);
+                //multi_select(i);
                 return false;
             }
         });
@@ -177,8 +181,9 @@ public class ImageOverviewActivity extends AppCompatActivity {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_ok:
-                    //burada async task olarak image hesaplama yapilacak
-                    
+                    actionMode = null;
+                    isMultiSelect = false;
+                    refreshAdapter();
                     Intent intent = new Intent(getApplicationContext(), SimilarImagesActivity.class);
                     intent.putExtra("Images", multiselect_list);
                     intent.putExtra("person", person);
@@ -214,12 +219,10 @@ public class ImageOverviewActivity extends AppCompatActivity {
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
         column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-        int i = 0;
-        while (cursor.moveToNext() && i < 100) {
+        while (cursor.moveToNext()) {
             absolutePathOfImage = cursor.getString(column_index_data);
 
             listOfAllImages.add(new Image(absolutePathOfImage));
-            i++;
         }
         return listOfAllImages;
     }

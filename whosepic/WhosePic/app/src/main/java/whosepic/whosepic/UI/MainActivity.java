@@ -3,11 +3,17 @@ package whosepic.whosepic.UI;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -20,6 +26,13 @@ import com.nightonke.boommenu.BoomMenuButton;
 import com.nightonke.boommenu.ButtonEnum;
 import com.nightonke.boommenu.Piece.PiecePlaceEnum;
 
+import java.util.ArrayList;
+
+import whosepic.whosepic.AppCode.ImageLearner.SimilarityFinder;
+import whosepic.whosepic.AppCode.ImageProcessor.ImageAnalyzer;
+import whosepic.whosepic.AppCode.ObjectModels.FaceInfo;
+import whosepic.whosepic.AppCode.ObjectModels.Image;
+import whosepic.whosepic.DatabaseManager.DatabaseManager;
 import whosepic.whosepic.R;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -60,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(context, AlbumsActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
         if(!checkPermission()) {
             requestPermission();
         } else {
             startActivity(new Intent(MainActivity.this,InfoActivity.class));
         }
-        */
+
         BoomMenuButton bmb = (BoomMenuButton) findViewById(R.id.bmb);
         bmb.setButtonEnum(ButtonEnum.TextInsideCircle);
         bmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_3_1);
@@ -104,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 });
         infoBuilder.normalImageRes(R.drawable.about);
         bmb.addBuilder(infoBuilder);
+        new HandleImageProcessingAndMapping().execute("");
 
         //goAlbums.setVisibility(View.VISIBLE);
         //goList.setVisibility(View.VISIBLE);
@@ -154,6 +168,99 @@ public class MainActivity extends AppCompatActivity {
                 SecondPermissionResult == PackageManager.PERMISSION_GRANTED;
     }
 
+    private class HandleImageProcessingAndMapping extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            checkImages();
+            ArrayList<Image> unprocessedImages = DatabaseManager.getInstance().getUnprocessedImages();
+            int count = 0;
+            for (Image img : unprocessedImages) {
+                ArrayList<FaceInfo> faces = ImageAnalyzer.getInstance().processImage(img);
+                for (FaceInfo face : faces) {
+                    DatabaseManager.getInstance().setFace(face, img);
+                }
+                DatabaseManager.getInstance().setImage(img, true, false);
+                publishProgress(0, count++);
+            }
+            ArrayList<Image> unmappedImages = DatabaseManager.getInstance().getUnmappedImages();
+            ArrayList<Image> allImagesInDb = DatabaseManager.getInstance().getAllImages();
+            count = 0;
+            for (Image img : unmappedImages) {
+                ArrayList<FaceInfo> faces = DatabaseManager.getInstance().getFaces(img);
+                for (FaceInfo face : faces) {
+                    for (Image img2 : allImagesInDb) {
+                        ArrayList<FaceInfo> faces2 = DatabaseManager.getInstance().getFaces(img2);
+                        for (FaceInfo comparedFace : faces2) {
+                            double d = SimilarityFinder.getInstance().getSimilarity(face, comparedFace);
+                            if (d < 0.4) {
+                                DatabaseManager.getInstance().setSimilarity(img, img2);
+
+                            }
+                        }
+                    }
+                }
+                publishProgress(1, count++);
+                DatabaseManager.getInstance().setImage(img, true, true);
+            }
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {}
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            if (values[0] == 0) {
+                Log.d("Processed", "" + values[1]);
+            } else {
+                Log.d("Mapped", "" + values[1]);
+            }
+
+        }
+
+
+    }
+
+    public void checkImages() {
+        ArrayList<Image> allImagesInGallery = getAllShownImagesPath(this);
+        ArrayList<Image> allImagesInDb = DatabaseManager.getInstance().getAllImages();
+        ArrayList<Image> allImagesInGalleryCopy = (ArrayList<Image>) allImagesInGallery.clone();
+        allImagesInGallery.removeAll(allImagesInDb);
+        allImagesInDb.removeAll(allImagesInGalleryCopy);
+        //allImagesInGallery = new ArrayList<>(allImagesInGallery.subList(0, 50));
+        DatabaseManager.getInstance().setInitialImageList(allImagesInGallery);
+        DatabaseManager.getInstance().deleteImageList(allImagesInDb);
+    }
+
+    public static ArrayList<Image> getAllShownImagesPath(Context context) {
+        Uri uri;
+        Cursor cursor;
+        int column_index_data, column_index_folder_name;
+        ArrayList<Image> listOfAllImages = new ArrayList<Image>();
+        String absolutePathOfImage = null;
+        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+        String[] projection = { MediaStore.MediaColumns.DATA,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME };
+
+        cursor = context.getContentResolver().query(uri, projection, null,
+                null, null);
+
+        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+        while (cursor.moveToNext()) {
+            absolutePathOfImage = cursor.getString(column_index_data);
+
+            listOfAllImages.add(new Image(absolutePathOfImage));
+        }
+        return listOfAllImages;
+    }
 //    public  void requestReadStoragePermissionGranted() {
 //        if (Build.VERSION.SDK_INT >= 23) {
 //            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
