@@ -75,10 +75,10 @@ public class GalleryAdapter extends BaseAdapter {
             picturesView.setScaleType(ImageView.ScaleType.CENTER);
             picturesView.setPadding(8,8,8,8);
         }
-        if(selectedImages.contains(images.get(position)))
+       /* if(selectedImages.contains(images.get(position)))
             picturesView.setForeground(context.getResources().getDrawable(R.drawable.if_misc_tick__1276844));
         else
-            picturesView.setForeground(null);
+            picturesView.setForeground(null);*/
 
         Glide.with(context).load(images.get(position).getPath())
                 .into(picturesView);

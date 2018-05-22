@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     Context context;
     public static final int RequestPermissionCode = 1;
+    BoomMenuButton bmb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,10 +78,10 @@ public class MainActivity extends AppCompatActivity {
         if(!checkPermission()) {
             requestPermission();
         } else {
-            startActivity(new Intent(MainActivity.this,InfoActivity.class));
+            //startActivity(new Intent(MainActivity.this,InfoActivity.class));
         }
 
-        BoomMenuButton bmb = (BoomMenuButton) findViewById(R.id.bmb);
+        bmb = (BoomMenuButton) findViewById(R.id.bmb);
         bmb.setButtonEnum(ButtonEnum.TextInsideCircle);
         bmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_3_1);
         bmb.setButtonPlaceEnum(ButtonPlaceEnum.SC_3_3);
@@ -117,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
                 });
         infoBuilder.normalImageRes(R.drawable.about);
         bmb.addBuilder(infoBuilder);
+        new LongOperation().execute("");
         new HandleImageProcessingAndMapping().execute("");
 
         //goAlbums.setVisibility(View.VISIBLE);
@@ -233,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Image> allImagesInGalleryCopy = (ArrayList<Image>) allImagesInGallery.clone();
         allImagesInGallery.removeAll(allImagesInDb);
         allImagesInDb.removeAll(allImagesInGalleryCopy);
-        //allImagesInGallery = new ArrayList<>(allImagesInGallery.subList(0, 50));
+        allImagesInGallery = new ArrayList<>(allImagesInGallery.subList(0, 30));
         DatabaseManager.getInstance().setInitialImageList(allImagesInGallery);
         DatabaseManager.getInstance().deleteImageList(allImagesInDb);
     }
@@ -260,6 +262,38 @@ public class MainActivity extends AppCompatActivity {
             listOfAllImages.add(new Image(absolutePathOfImage));
         }
         return listOfAllImages;
+    }
+
+    private class LongOperation extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            for (int i = 0; i < 5; i++) {
+                try {
+                    Thread.sleep(80);
+                    Log.d("A","xyzthread");
+                } catch (InterruptedException e) {
+                    Thread.interrupted();
+                }
+            }
+
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.d("B","boom");
+            bmb.boom();
+             // txt.setText(result);
+            // might want to change "executed" for the returned string passed
+            // into onPostExecute() but that is upto you
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
     }
 //    public  void requestReadStoragePermissionGranted() {
 //        if (Build.VERSION.SDK_INT >= 23) {
