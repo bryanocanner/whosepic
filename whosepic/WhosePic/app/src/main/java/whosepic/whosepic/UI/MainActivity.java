@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Image> allImagesInGalleryCopy = (ArrayList<Image>) allImagesInGallery.clone();
         allImagesInGallery.removeAll(allImagesInDb);
         allImagesInDb.removeAll(allImagesInGalleryCopy);
-        allImagesInGallery = new ArrayList<>(allImagesInGallery.subList(0, 30));
+        //allImagesInGallery = new ArrayList<>(allImagesInGallery.subList(0, 30));
         DatabaseManager.getInstance().setInitialImageList(allImagesInGallery);
         DatabaseManager.getInstance().deleteImageList(allImagesInDb);
     }
