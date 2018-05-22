@@ -58,6 +58,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
     @Override
     public AlbumsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.single_album_view, null);
+        view.setPadding(100,30,30,30);
         AlbumsViewHolder albumsViewHolder = new AlbumsViewHolder(view);
         return albumsViewHolder;
     }

@@ -47,9 +47,9 @@ public class AlbumActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
-        nameView = (TextView) findViewById(R.id.albumName2);
         album = (Album)(getIntent().getSerializableExtra("Album"));
-        nameView.setText(album.getName());
+        setTitle(album.getName());
+        //nameView.setText(album.getName());
         context = this;
 
         gridView = (GridView) findViewById(R.id.gridViewAlbum);
