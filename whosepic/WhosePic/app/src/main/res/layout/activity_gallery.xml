@@ -34,11 +34,11 @@
 
     <TextView
         android:id="@+id/text"
-        android:layout_width="207dp"
+        android:layout_width="300dp"
         android:layout_height="32dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="11dp"
-        android:text="Choose 3 pictures for this person"
+        android:text=""
         android:visibility="visible"
         android:layout_below="@id/contactImage"/>
 

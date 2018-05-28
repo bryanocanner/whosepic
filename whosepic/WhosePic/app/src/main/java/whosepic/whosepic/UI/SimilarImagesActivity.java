@@ -4,8 +4,13 @@ package whosepic.whosepic.UI;
  * Created by emintosun on 1.05.2018.
  */
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ActionMode;
@@ -26,25 +31,23 @@ public class SimilarImagesActivity extends AppCompatActivity {
     private GridView gridView;
     private TextView textView;
     private SimilarImagesAdapter adapter;
+    private Activity activity;
     private Person person;
     ActionBar actionBar;
-    ArrayList<Image> imageList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.activity = this;
         setContentView(R.layout.activity_similar_images);
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
-        person = (Person) (getIntent().getExtras().getSerializable("person"));
-        imageList = (ArrayList<Image>)(getIntent().getExtras().getSerializable("Images"));
-        imageList = DatabaseManager.getInstance().getSimilarImages(imageList);
+        person = (Person) (getIntent().getExtras().getSerializable("Person"));
         textView = (TextView) findViewById(R.id.textView);
         gridView = (GridView) findViewById(R.id.gridImages);
-        String s = person.getContactName() + "'s photos.";
-        textView.setText(s);
-        adapter = new SimilarImagesAdapter(this,imageList);
+        textView.setText("Select a profile picture for " + person.getContactName());
+        adapter = new SimilarImagesAdapter(this, getAllShownImagesPath(this));
         gridView.setAdapter(adapter);
         gridView.setNumColumns(3);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -52,14 +55,10 @@ public class SimilarImagesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                                     int position, long arg3) {
-                    if (adapter.getImages() != null && !adapter.getImages().isEmpty()) {
-                        Intent intent = new Intent(getApplicationContext(), ImagePreviewActivity.class);
-                        intent.putExtra("Image", (Image) adapter.getImages().get(position));
-                        intent.putExtra("person", person);
-                        intent.putExtra("Adding", false);
-                        intent.putExtra("images", imageList);
-                        startActivity(intent);
-
+                if (adapter.getImages() != null && !adapter.getImages().isEmpty()) {
+                    person.setContactImagePath(adapter.getImages().get(position).getPath());
+                    DatabaseManager.getInstance().setPerson(person);
+                    activity.onBackPressed();
                 }
             }
         });
@@ -69,6 +68,30 @@ public class SimilarImagesActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    public static ArrayList<Image> getAllShownImagesPath(Context context) {
+        Uri uri;
+        Cursor cursor;
+        int column_index_data, column_index_folder_name;
+        ArrayList<Image> listOfAllImages = new ArrayList<Image>();
+        String absolutePathOfImage = null;
+        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+        String[] projection = { MediaStore.MediaColumns.DATA,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME };
+
+        cursor = context.getContentResolver().query(uri, projection, null,
+                null, null);
+
+        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+        while (cursor.moveToNext()) {
+            absolutePathOfImage = cursor.getString(column_index_data);
+
+            listOfAllImages.add(new Image(absolutePathOfImage));
+        }
+        return listOfAllImages;
     }
 
 }

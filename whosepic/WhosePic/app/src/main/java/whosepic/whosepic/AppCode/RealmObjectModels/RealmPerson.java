@@ -8,4 +8,30 @@ import io.realm.RealmObject;
 
 public class RealmPerson extends RealmObject {
     int id;
+    String phoneNumber;
+    String path;
+
+    public int getId() {
+        return id;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setPhoneNumber(String number) {
+        phoneNumber = number;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
 }

@@ -35,19 +35,19 @@ import whosepic.whosepic.UI.Views.SquareImageView;
 public class GalleryAdapter extends BaseAdapter {
     private Context context;
     public ArrayList<Image> images;
-    public ArrayList<Image> selectedImages;
+    //public ArrayList<Image> selectedImages;
 
-    public GalleryAdapter(Context context,ArrayList<Image> images, ArrayList<Image> selectedImages) {
+    public GalleryAdapter(Context context,ArrayList<Image> images) {
         this.context = context;
         this.images = images;
-        this.selectedImages = selectedImages;
     }
 
-
+    /*
     static class ViewHolder {
         TextView imageTitle;
         ImageView image;
     }
+    */
 
     public int getCount() {
         return images.size();
@@ -61,7 +61,6 @@ public class GalleryAdapter extends BaseAdapter {
         return position;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     public View getView(final int position, View convertView,
                         ViewGroup parent) {
         SquareImageView picturesView;
@@ -75,10 +74,12 @@ public class GalleryAdapter extends BaseAdapter {
             picturesView.setScaleType(ImageView.ScaleType.CENTER);
             picturesView.setPadding(8,8,8,8);
         }
-       /* if(selectedImages.contains(images.get(position)))
+        /*
+        if(selectedImages.contains(images.get(position)))
             picturesView.setForeground(context.getResources().getDrawable(R.drawable.if_misc_tick__1276844));
         else
-            picturesView.setForeground(null);*/
+            picturesView.setForeground(null);
+        */
 
         Glide.with(context).load(images.get(position).getPath())
                 .into(picturesView);

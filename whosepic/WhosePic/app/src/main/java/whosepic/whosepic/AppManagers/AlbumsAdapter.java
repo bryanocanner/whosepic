@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +70,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.AlbumsView
             Album album = albums.get(position);
             holder.albumImageView.setImageResource(R.drawable.imagefiles_folder_icon_blue);
             holder.albumName.setText(album.getName());
+            holder.albumName.setGravity(Gravity.CENTER_HORIZONTAL);
         }
     }
 

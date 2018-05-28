@@ -5,13 +5,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="52dp">
 
-        <ImageView
+        <whosepic.whosepic.UI.Views.SquareImageView
             android:id="@+id/ivContactImage"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginStart="10dp"/>
 
         <LinearLayout

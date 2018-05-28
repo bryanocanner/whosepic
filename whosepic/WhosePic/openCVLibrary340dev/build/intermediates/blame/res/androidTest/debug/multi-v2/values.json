@@ -1,7 +1,11 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\Sebahattin\\Desktop\\Dersler\\senior\\WhosePic\\whosepic_m\\whosepic\\whosepic\\WhosePic\\openCVLibrary340dev\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values\\values.xml",
+            "outputFile": "/Users/aligunes/Desktop/bitirme/whosepicClone/whosepic/whosepic/WhosePic/openCVLibrary340dev/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values/values.xml",
+            "map": []
+        },
+        {
+            "outputFile": "/Users/aligunes/Desktop/bitirme/whosepicClone/whosepic/whosepic/WhosePic/C:\\Users\\Sebahattin\\Desktop\\Dersler\\senior\\WhosePic\\whosepic_m\\whosepic\\whosepic\\WhosePic\\openCVLibrary340dev\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values\\values.xml",
             "map": []
         }
     ]

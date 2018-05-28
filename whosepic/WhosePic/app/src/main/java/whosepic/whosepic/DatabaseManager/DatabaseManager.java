@@ -43,6 +43,17 @@ public class DatabaseManager {
         realm.close();
     }
 
+    public boolean checkImage(Image img) {
+        realm.beginTransaction();
+        RealmImage ri = realm.where(RealmImage.class).equalTo("path", img.getPath()).findFirst();
+        if (ri == null) {
+            realm.close();
+            return false;
+        }
+        realm.close();
+        return true;
+    }
+
     public void setImage(Image img, boolean isProcessed, boolean isMapped) {
         realm.beginTransaction();
         RealmImage ri = realm.where(RealmImage.class).equalTo("path", img.getPath()).findFirst();
@@ -77,8 +88,36 @@ public class DatabaseManager {
         realm.close();
     }
 
-    public void setPerson(Person person) {
+    public void setImagesToAlbum(Album album, ArrayList<Image> imgs) {
+        RealmAlbum ra = realm.where(RealmAlbum.class).equalTo("name", album.getName()).findFirst();
+        realm.beginTransaction();
+        for (Image img : imgs) {
+            RealmImage ri = realm.where(RealmImage.class).equalTo("path", img.getPath()).findFirst();
+            RealmAlbumImage rai = realm.where(RealmAlbumImage.class).equalTo("imageId", ri.getId())
+                    .and().equalTo("albumId", ra.getId()).findFirst();
+            if (rai == null) {
+                rai = new RealmAlbumImage();
+                rai.setAlbumId(ra.getId());
+                rai.setImageId(ri.getId());
+                realm.insertOrUpdate(rai);
+            }
+        }
+        realm.commitTransaction();
+        realm.close();
+    }
 
+    public void setPerson(Person person) {
+        realm.beginTransaction();
+        RealmPerson rp = realm.where(RealmPerson.class).equalTo("phoneNumber", person.getContactNumber()).findFirst();
+        if (rp == null) {
+            rp = new RealmPerson();
+            rp.setId(generateId(RealmImage.class));
+        }
+        rp.setPhoneNumber(person.getContactNumber());
+        rp.setPath(person.getContactImagePath());
+        realm.insertOrUpdate(rp);
+        realm.commitTransaction();
+        realm.close();
     }
 
     public void setFace(FaceInfo face, Image img) {
@@ -183,6 +222,16 @@ public class DatabaseManager {
         return allImages;
     }
 
+    public ArrayList<Image> getProcessedImages() {
+        RealmResults<RealmImage> images = realm.where(RealmImage.class).equalTo("isProcessed", true).findAll();
+        ArrayList<Image> allImages = new ArrayList<Image>();
+        for (RealmImage ri : images) {
+            allImages.add(new Image(ri.getPath()));
+        }
+        realm.close();
+        return allImages;
+    }
+
     public ArrayList<Image> getUnmappedImages() {
         RealmResults<RealmImage> images = realm.where(RealmImage.class).equalTo("isMapped", false).findAll();
         ArrayList<Image> allImages = new ArrayList<Image>();
@@ -249,5 +298,16 @@ public class DatabaseManager {
         rai.deleteAllFromRealm();
         realm.commitTransaction();
         realm.close();
+    }
+
+    public String getProfilePhotoPath(Person p) {
+        RealmPerson rp = realm.where(RealmPerson.class).equalTo("phoneNumber", p.getContactNumber()).findFirst();
+        if (rp == null) {
+            realm.close();
+            return "";
+        }
+        String path = rp.getPath();
+        realm.close();
+        return path;
     }
 }

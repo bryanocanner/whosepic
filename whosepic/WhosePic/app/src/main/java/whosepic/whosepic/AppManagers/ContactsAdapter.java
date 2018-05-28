@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import whosepic.whosepic.AppCode.ObjectModels.Person;
 import whosepic.whosepic.R;
+import whosepic.whosepic.UI.Views.SquareImageView;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ContactViewHolder> implements Filterable{
 
@@ -46,12 +48,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     @Override
     public void onBindViewHolder(ContactViewHolder holder, int position) {
         Person person = contactListFiltered.get(position);
-        if (person.getContactImagePath() != null) {
+        if (!person.getContactImagePath().equals("")) {
             Uri uri = Uri.parse(person.getContactImagePath());
             holder.ivContactImage.setImageURI(uri);
         } else {
             holder.ivContactImage.setImageResource(R.drawable.default_profile);
         }
+        holder.ivContactImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
         holder.tvContactName.setText(person.getContactName());
         holder.tvPhoneNumber.setText(person.getContactNumber());
     }
@@ -100,17 +103,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     }
     public  class ContactViewHolder extends RecyclerView.ViewHolder{
 
-        ImageView ivContactImage;
+        SquareImageView ivContactImage;
         TextView tvContactName;
         TextView tvPhoneNumber;
 
         public ContactViewHolder(View itemView) {
             super(itemView);
-            ivContactImage = (ImageView) itemView.findViewById(R.id.ivContactImage);
+            ivContactImage = (SquareImageView) itemView.findViewById(R.id.ivContactImage);
             tvContactName = (TextView) itemView.findViewById(R.id.tvContactName);
             tvPhoneNumber = (TextView) itemView.findViewById(R.id.tvPhoneNumber);
 
-            ivContactImage.setPadding(0,10,0,10);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

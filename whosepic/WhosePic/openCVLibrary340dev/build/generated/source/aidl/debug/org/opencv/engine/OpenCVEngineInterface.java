@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: C:\\Users\\Sebahattin\\Desktop\\Dersler\\senior\\WhosePic\\whosepic_m\\whosepic\\whosepic\\WhosePic\\openCVLibrary340dev\\src\\main\\aidl\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
+ * Original file: /Users/aligunes/Desktop/bitirme/whosepicClone/whosepic/whosepic/WhosePic/openCVLibrary340dev/src/main/aidl/org/opencv/engine/OpenCVEngineInterface.aidl
  */
 package org.opencv.engine;
 /**

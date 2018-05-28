@@ -1,13 +1,17 @@
 package whosepic.whosepic.UI;
 
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 
 import android.content.Context;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.provider.ContactsContract;
@@ -16,13 +20,16 @@ import android.provider.MediaStore;
 
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,9 +37,14 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import whosepic.whosepic.AppCode.ImageLearner.SimilarityFinder;
+import whosepic.whosepic.AppCode.ImageProcessor.ImageAnalyzer;
+import whosepic.whosepic.AppCode.ObjectModels.Album;
+import whosepic.whosepic.AppCode.ObjectModels.FaceInfo;
 import whosepic.whosepic.AppCode.ObjectModels.Image;
 import whosepic.whosepic.AppCode.ObjectModels.Person;
 import whosepic.whosepic.AppManagers.GalleryAdapter;
+import whosepic.whosepic.DatabaseManager.DatabaseManager;
 import whosepic.whosepic.R;
 
 /**
@@ -43,16 +55,14 @@ public class ImageOverviewActivity extends AppCompatActivity {
     private GridView gridView;
     private TextView nameView;
     private TextView numberView;
+    private TextView text;
     private ImageView  ivContactImage;
     private GalleryAdapter galleryAdapter;
     private Person person;
     ActionBar actionBar;
-    ActionMode actionMode;
+    private ProgressDialog progress;
+    private boolean isFirstTime;
     ArrayList<Image> imageList = new ArrayList<>();
-    ArrayList<Image> multiselect_list = new ArrayList<>();
-    boolean isMultiSelect = false;
-    Menu context_menu;
-    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,15 +72,17 @@ public class ImageOverviewActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         person = (Person) (getIntent().getExtras().getSerializable("Person"));
+        isFirstTime = true;
         nameView = (TextView) findViewById(R.id.contactName);
         numberView = (TextView) findViewById(R.id.phoneNumberView);
+        text = (TextView) findViewById(R.id.text);
         nameView.setText(person.getContactName());
         numberView.setText(person.getContactNumber());
-        ivContactImage = (ImageView) findViewById(R.id.contactImage);
-        imageList = getAllShownImagesPath(this);
+        text.setText("Photos that are similar to " + person.getContactName());
 
+        ivContactImage = (ImageView) findViewById(R.id.contactImage);
         gridView = (GridView) findViewById(R.id.gridViewGallery);
-        galleryAdapter = new GalleryAdapter(this.getApplicationContext(),imageList,multiselect_list);
+        galleryAdapter = new GalleryAdapter(this,imageList);
         gridView.setAdapter(galleryAdapter);
         gridView.setNumColumns(3);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -78,57 +90,108 @@ public class ImageOverviewActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                                     int position, long arg3) {
-                if (isMultiSelect) {
-                    multi_select(position);
-                    /*if (multiselect_list.size() == 0) {
-                        mActionModeCallback.onDestroyActionMode(actionMode);
-                        context_menu = null;
-                    }*/
-                } else {
-                    if (galleryAdapter.getImages() != null && !galleryAdapter.getImages().isEmpty()) {
-                        Intent intent = new Intent(getApplicationContext(), ImagePreviewActivity.class);
-                        intent.putExtra("Image", (Image) galleryAdapter.getImages().get(position));
-                        intent.putExtra("position",position);
-                        intent.putExtra("person", person);
-                        intent.putExtra("Adding", false);
-                        intent.putExtra("images",imageList);
-                        startActivity(intent);
-                    }
+                if (galleryAdapter.getImages() != null && !galleryAdapter.getImages().isEmpty()) {
+                    Intent intent = new Intent(getApplicationContext(), ImagePreviewActivity.class);
+                    intent.putExtra("Image", (Image) galleryAdapter.getImages().get(position));
+                    intent.putExtra("position", position);
+                    intent.putExtra("person", person);
+                    intent.putExtra("Adding", false);
+                    intent.putExtra("images", imageList);
+                    startActivity(intent);
                 }
             }
         });
-        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (!isMultiSelect) {
-                    multiselect_list = new ArrayList<Image>();
-                    isMultiSelect = true;
-
-                    if (actionMode == null) {
-                        actionMode = startActionMode(mActionModeCallback);
-                    }
-                }
-
-                //multi_select(i);
-                return false;
-            }
-        });
-        if (person.getContactImagePath() != null) {
+        ivContactImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        if (!person.getContactImagePath().equals("")) {
             Uri uri = Uri.parse(person.getContactImagePath());
             ivContactImage.setImageURI(uri);
         } else {
             ivContactImage.setImageResource(R.drawable.default_profile);
-            ivContactImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(Intent.ACTION_EDIT);
-                    intent.setData(ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,person.getId()));
-                    startActivity(intent);
-                }
-            });
         }
+        ivContactImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickProfilePicture();
+            }
+        });
+    }
 
+    protected void onResume() {
+        super.onResume();
+        String newContactImagePath = DatabaseManager.getInstance().getProfilePhotoPath(person);
+        boolean isPhotoChanged = !person.getContactImagePath().equals(newContactImagePath);
+        if (isPhotoChanged) {
+            isFirstTime = true;
+            person.setContactImagePath(newContactImagePath);
+            Uri uri = Uri.parse(person.getContactImagePath());
+            ivContactImage.setImageURI(uri);
+        }
+        if (isFirstTime) {
+            new HandleImageMapping(this).execute("");
+        }
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.overview_menu, menu);
+        menu.getItem(0).setVisible(true);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_all_to_album:
+                // User chose the "Settings" item, show the app settings UI...
+                AlertDialog.Builder builderSingle = new AlertDialog.Builder(this);
+                builderSingle.setTitle("Choose the album");
+
+                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item);
+                final ArrayList<Album> albums = DatabaseManager.getInstance().getDummyAlbums();
+                for (Album a : albums)
+                    arrayAdapter.add(a.getName());
+
+                builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Album album = DatabaseManager.getInstance().getAlbum(arrayAdapter.getItem(which));
+                        DatabaseManager.getInstance().setImagesToAlbum(album, imageList);
+                        Toast.makeText(ImageOverviewActivity.this, "Photos are added to album", Toast.LENGTH_LONG).show();
+                    }
+                });
+                builderSingle.show();
+
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    private void clickProfilePicture() {
+        AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+        dlgAlert.setMessage("Would you like to change profile picture?");
+        dlgAlert.setCancelable(true);
+        dlgAlert.setNegativeButton("Cancel", null);
+        dlgAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(getApplicationContext(), SimilarImagesActivity.class);
+                intent.putExtra("Person", person);
+                startActivity(intent);
+            }
+        });
+        dlgAlert.create().show();
     }
 
     @Override
@@ -137,93 +200,65 @@ public class ImageOverviewActivity extends AppCompatActivity {
         return true;
     }
 
-    public void multi_select(int position) {
-        if (actionMode != null) {
-            if (multiselect_list.contains(imageList.get(position)))
-                multiselect_list.remove(imageList.get(position));
-            else
-                multiselect_list.add(imageList.get(position));
-
-            if (multiselect_list.size() > 0)
-                actionMode.setTitle("" + multiselect_list.size());
-            else
-                actionMode.setTitle("");
-
-            refreshAdapter();
-
-        }
-    }
-
-    public void refreshAdapter()
-    {
-        galleryAdapter.selectedImages = multiselect_list;
-        galleryAdapter.images = imageList;
-        galleryAdapter.notifyDataSetChanged();
-    }
-
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            // Inflate a menu resource providing context menu items
-            MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.menu_multi_select, menu);
-            context_menu = menu;
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false; // Return false if nothing is done
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.action_ok:
-                    actionMode = null;
-                    isMultiSelect = false;
-                    refreshAdapter();
-                    Intent intent = new Intent(getApplicationContext(), SimilarImagesActivity.class);
-                    intent.putExtra("Images", multiselect_list);
-                    intent.putExtra("person", person);
-                    startActivity(intent);
-                    return true;
-                default:
-                    return false;
+    public void getSimilarImagesPath(ArrayList<Image> list) {
+        ArrayList<Image> listOfAllImages = new ArrayList<>();
+        Image contactImage = new Image(person.getContactImagePath());
+        FaceInfo contactFace = DatabaseManager.getInstance().getFaces(contactImage).get(0);
+        ArrayList<Image> processedImages = DatabaseManager.getInstance().getProcessedImages();
+        for (Image img : processedImages) {
+            ArrayList<FaceInfo> faces = DatabaseManager.getInstance().getFaces(img);
+            for (FaceInfo face : faces) {
+                double d = SimilarityFinder.getInstance().getSimilarity(face, contactFace);
+                if (d < 0.4) {
+                    listOfAllImages.add(img);
+                }
             }
         }
+        list.clear();
+        list.addAll(listOfAllImages);
+    }
+
+    private class HandleImageMapping extends AsyncTask<String, Integer, String> {
+
+        private Context activity;
+
+        public HandleImageMapping(Context context) {
+            this.activity = context;
+        }
 
         @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            actionMode = null;
-            isMultiSelect = false;
-            multiselect_list = new ArrayList<Image>();
-            refreshAdapter();
+        protected String doInBackground(String... params) {
+            getSimilarImagesPath(imageList);
+            return "Executed";
         }
-    };
 
-    public static ArrayList<Image> getAllShownImagesPath(Context context) {
-        Uri uri;
-        Cursor cursor;
-        int column_index_data, column_index_folder_name;
-        ArrayList<Image> listOfAllImages = new ArrayList<Image>();
-        String absolutePathOfImage = null;
-        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-
-        String[] projection = { MediaStore.MediaColumns.DATA,
-                MediaStore.Images.Media.BUCKET_DISPLAY_NAME };
-
-        cursor = context.getContentResolver().query(uri, projection, null,
-                null, null);
-
-        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-        while (cursor.moveToNext()) {
-            absolutePathOfImage = cursor.getString(column_index_data);
-
-            listOfAllImages.add(new Image(absolutePathOfImage));
+        @Override
+        protected void onPostExecute(String result) {
+            if (progress.isShowing()) {
+                progress.dismiss();
+            }
+            isFirstTime = false;
+            galleryAdapter.notifyDataSetChanged();
         }
-        return listOfAllImages;
+
+        @Override
+        protected void onPreExecute() {
+            progress = new ProgressDialog(activity);
+            progress.setTitle("Mapping");
+            progress.setMessage("Wait for mapping...");
+            progress.setCancelable(false);
+            progress.show();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            if (values[0] == 0) {
+                Log.d("Processed", "" + values[1]);
+            } else {
+                Log.d("Mapped", "" + values[1]);
+            }
+
+        }
     }
 }

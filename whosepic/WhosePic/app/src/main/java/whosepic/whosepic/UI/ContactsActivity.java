@@ -4,17 +4,24 @@ package whosepic.whosepic.UI;
  * Created by ASUS on 2.12.2017.
  */
 
+import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.renderscript.ScriptGroup;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,8 +35,12 @@ import com.github.tamir7.contacts.Query;
 import java.util.ArrayList;
 import java.util.List;
 
+import whosepic.whosepic.AppCode.ImageProcessor.ImageAnalyzer;
+import whosepic.whosepic.AppCode.ObjectModels.FaceInfo;
+import whosepic.whosepic.AppCode.ObjectModels.Image;
 import whosepic.whosepic.AppManagers.ContactsAdapter;
 import whosepic.whosepic.AppCode.ObjectModels.Person;
+import whosepic.whosepic.DatabaseManager.DatabaseManager;
 import whosepic.whosepic.R;
 
 public class ContactsActivity extends AppCompatActivity implements ContactsAdapter.ContactsAdapterListener{
@@ -39,6 +50,8 @@ public class ContactsActivity extends AppCompatActivity implements ContactsAdapt
     private ContactsAdapter mAdapter;
     private SearchView searchView;
     ActionBar actionBar;
+    Person clicked;
+    ProgressDialog progress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Contacts.initialize(getApplicationContext());
@@ -55,7 +68,16 @@ public class ContactsActivity extends AppCompatActivity implements ContactsAdapt
         mAdapter = new ContactsAdapter(personList, getApplicationContext(), this);
         rvContacts.setLayoutManager(new LinearLayoutManager(this));
         rvContacts.setAdapter(mAdapter);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (clicked != null) {
+            clicked.setContactImagePath(DatabaseManager.getInstance().getProfilePhotoPath(clicked));
+            personList.set(personList.indexOf(clicked), clicked);
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -111,8 +133,9 @@ public class ContactsActivity extends AppCompatActivity implements ContactsAdapt
         q.hasPhoneNumber();
         List<Contact> contacts = q.find();
         for (Contact c : contacts) {
-            personList.add(new Person(c.getDisplayName(), c.getPhoneNumbers().get(0).getNumber(),
-                    c.getPhotoUri() != null ? c.getPhotoUri() : null,c.getId()));
+            Person p = new Person(c.getDisplayName(), c.getPhoneNumbers().get(0).getNumber(), null, c.getId());
+            p.setContactImagePath(DatabaseManager.getInstance().getProfilePhotoPath(p));
+            personList.add(p);
         }
         // Todo: sort personlist api 24 required.
         /*personList.sort(new Comparator<Person>() {
@@ -124,10 +147,77 @@ public class ContactsActivity extends AppCompatActivity implements ContactsAdapt
     }
 
     @Override
-    public void onContactSelected(Person person) {
+    public void onContactSelected(final Person person) {
+        clicked = person;
+        if (person.getContactImagePath().equals("")) {
+            AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+            dlgAlert.setMessage("This contact does not have profile picture. Would you like to assign one?");
+            dlgAlert.setCancelable(true);
+            dlgAlert.setNegativeButton("Cancel", null);
+            dlgAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(getApplicationContext(), SimilarImagesActivity.class);
+                    intent.putExtra("Person", person);
+                    startActivity(intent);
+                }
+            });
+            dlgAlert.create().show();
+            return;
+        }
+        Image img = new Image(person.getContactImagePath());
+        if (!DatabaseManager.getInstance().checkImage(img)) {
+            new HandleImageProcessing().execute(img);
+            progress = new ProgressDialog(this);
+            progress.setTitle("Processing");
+            progress.setMessage("Assigned profile picture is processing...");
+            progress.setCancelable(false);
+            progress.show();
+            return;
+        }
+        if (DatabaseManager.getInstance().getFaces(img).size() != 1) {
+            AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+            dlgAlert.setMessage("Assigned profile picture does not in a proper format. Would you like to change it?");
+            dlgAlert.setCancelable(true);
+            dlgAlert.setNegativeButton("Cancel", null);
+            dlgAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(getApplicationContext(), SimilarImagesActivity.class);
+                    intent.putExtra("Person", person);
+                    startActivity(intent);
+                }
+            });
+            dlgAlert.create().show();
+            return;
+        }
         Intent intent = new Intent(getApplicationContext(), ImageOverviewActivity.class);
         intent.putExtra("Person", (Person) person);
         startActivity(intent);
+    }
+
+    private class HandleImageProcessing extends AsyncTask<Image, Integer, String> {
+
+        @Override
+        protected String doInBackground(Image... params) {
+            Image img = params[0];
+            ArrayList<FaceInfo> faces = ImageAnalyzer.getInstance().processImage(img);
+            DatabaseManager.getInstance().setImage(img, true, false);
+            for (FaceInfo face : faces) {
+                DatabaseManager.getInstance().setFace(face, img);
+            }
+            if (progress != null) {
+                progress.dismiss();
+            }
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {}
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {}
     }
 
     static class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener

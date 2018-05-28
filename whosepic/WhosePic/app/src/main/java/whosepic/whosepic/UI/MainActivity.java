@@ -125,6 +125,11 @@ public class MainActivity extends AppCompatActivity {
         //goList.setVisibility(View.VISIBLE);
     }
 
+    protected void onResume() {
+        super.onResume();
+        new LongOperation().execute("");
+    }
+
     private void requestPermission() {
 
         ActivityCompat.requestPermissions(MainActivity.this, new String[]
@@ -174,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-
             checkImages();
             ArrayList<Image> unprocessedImages = DatabaseManager.getInstance().getUnprocessedImages();
             int count = 0;
@@ -186,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 DatabaseManager.getInstance().setImage(img, true, false);
                 publishProgress(0, count++);
             }
-            ArrayList<Image> unmappedImages = DatabaseManager.getInstance().getUnmappedImages();
+            /*ArrayList<Image> unmappedImages = DatabaseManager.getInstance().getUnmappedImages();
             ArrayList<Image> allImagesInDb = DatabaseManager.getInstance().getAllImages();
             count = 0;
             for (Image img : unmappedImages) {
@@ -205,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 publishProgress(1, count++);
                 DatabaseManager.getInstance().setImage(img, true, true);
-            }
+            }*/
             return "Executed";
         }
 
@@ -284,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             Log.d("B","boom");
             bmb.boom();
-             // txt.setText(result);
+            // txt.setText(result);
             // might want to change "executed" for the returned string passed
             // into onPostExecute() but that is upto you
         }

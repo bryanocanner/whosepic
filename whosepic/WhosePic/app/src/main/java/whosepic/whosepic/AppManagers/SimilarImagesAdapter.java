@@ -33,7 +33,7 @@ public class SimilarImagesAdapter extends BaseAdapter {
     private Context context;
     public ArrayList<Image> images;
 
-    public SimilarImagesAdapter(Context context,ArrayList<Image> images) {
+    public SimilarImagesAdapter(Context context, ArrayList<Image> images) {
         this.context = context;
         this.images = images;
     }

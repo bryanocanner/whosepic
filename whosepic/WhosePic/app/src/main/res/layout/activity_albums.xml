@@ -20,6 +20,6 @@
         android:gravity="center_horizontal"
         android:paddingTop="30dp"
         android:visibility="gone"
-        android:text="There is no albums." />
+        android:text="There are no albums." />
 
 </RelativeLayout>
